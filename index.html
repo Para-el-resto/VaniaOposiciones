@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vania ✦</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ── HERO con watermark ── -->
+<section id="hero">
+  <!-- Escudo PM Madrid — línea fina, sol radiante + escudo central -->
+  <div class="hero-shield hero-shield-l" aria-hidden="true">
+    <svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g stroke="#2d5a2d" fill="none" opacity="0.38">
+        <!-- Rayos del sol exterior (estrella de muchas puntas) -->
+        <circle cx="80" cy="80" r="72" stroke-width="0.7"/>
+        <circle cx="80" cy="80" r="62" stroke-width="0.7"/>
+        <!-- 32 rayos alternos largo/corto -->
+        <line x1="80" y1="8" x2="80" y2="18" stroke-width="1.2"/>
+        <line x1="80" y1="142" x2="80" y2="152" stroke-width="1.2"/>
+        <line x1="8" y1="80" x2="18" y2="80" stroke-width="1.2"/>
+        <line x1="142" y1="80" x2="152" y2="80" stroke-width="1.2"/>
+        <line x1="24.7" y1="24.7" x2="31.8" y2="31.8" stroke-width="1.2"/>
+        <line x1="135.3" y1="24.7" x2="128.2" y2="31.8" stroke-width="1.2"/>
+        <line x1="24.7" y1="135.3" x2="31.8" y2="128.2" stroke-width="1.2"/>
+        <line x1="135.3" y1="135.3" x2="128.2" y2="128.2" stroke-width="1.2"/>
+        <!-- Rayos intermedios -->
+        <line x1="42" y1="12.5" x2="46" y2="21.5" stroke-width="0.9"/>
+        <line x1="118" y1="12.5" x2="114" y2="21.5" stroke-width="0.9"/>
+        <line x1="12.5" y1="42" x2="21.5" y2="46" stroke-width="0.9"/>
+        <line x1="147.5" y1="42" x2="138.5" y2="46" stroke-width="0.9"/>
+        <line x1="12.5" y1="118" x2="21.5" y2="114" stroke-width="0.9"/>
+        <line x1="147.5" y1="118" x2="138.5" y2="114" stroke-width="0.9"/>
+        <line x1="42" y1="147.5" x2="46" y2="138.5" stroke-width="0.9"/>
+        <line x1="118" y1="147.5" x2="114" y2="138.5" stroke-width="0.9"/>
+        <!-- más rayos -->
+        <line x1="16" y1="60" x2="25" y2="63" stroke-width="0.7"/>
+        <line x1="144" y1="60" x2="135" y2="63" stroke-width="0.7"/>
+        <line x1="16" y1="100" x2="25" y2="97" stroke-width="0.7"/>
+        <line x1="144" y1="100" x2="135" y2="97" stroke-width="0.7"/>
+        <line x1="60" y1="16" x2="63" y2="25" stroke-width="0.7"/>
+        <line x1="100" y1="16" x2="97" y2="25" stroke-width="0.7"/>
+        <line x1="60" y1="144" x2="63" y2="135" stroke-width="0.7"/>
+        <line x1="100" y1="144" x2="97" y2="135" stroke-width="0.7"/>
+        <!-- Escudo central -->
+        <path d="M56 50 L56 88 Q56 108 80 116 Q104 108 104 88 L104 50 Z" stroke-width="1.2"/>
+        <!-- Corona sobre el escudo -->
+        <path d="M60 50 L60 42 M70 50 L68 40 M80 50 L80 38 M90 50 L92 40 M100 50 L100 42" stroke-width="1"/>
+        <circle cx="60" cy="41" r="2.5"/>
+        <circle cx="68" cy="39" r="2.5"/>
+        <circle cx="80" cy="37" r="3"/>
+        <circle cx="92" cy="39" r="2.5"/>
+        <circle cx="100" cy="41" r="2.5"/>
+        <line x1="56" y1="50" x2="104" y2="50" stroke-width="1.2"/>
+        <!-- Oso dentro del escudo -->
+        <ellipse cx="80" cy="98" rx="10" ry="12"/>
+        <circle cx="80" cy="84" r="7"/>
+        <circle cx="76.5" cy="82" r="1.5"/>
+        <circle cx="83.5" cy="82" r="1.5"/>
+        <!-- Árbol madroño -->
+        <line x1="80" y1="98" x2="80" y2="78"/>
+        <ellipse cx="80" cy="70" rx="10" ry="8"/>
+        <ellipse cx="70" cy="74" rx="7" ry="5" transform="rotate(-20 70 74)"/>
+        <ellipse cx="90" cy="74" rx="7" ry="5" transform="rotate(20 90 74)"/>
+        <!-- 7 estrellas en arco -->
+        <circle cx="62" cy="58" r="1.8" fill="#2d5a2d"/>
+        <circle cx="67" cy="54" r="1.8" fill="#2d5a2d"/>
+        <circle cx="73" cy="52" r="1.8" fill="#2d5a2d"/>
+        <circle cx="80" cy="52" r="1.8" fill="#2d5a2d"/>
+        <circle cx="87" cy="52" r="1.8" fill="#2d5a2d"/>
+        <circle cx="93" cy="54" r="1.8" fill="#2d5a2d"/>
+        <circle cx="98" cy="58" r="1.8" fill="#2d5a2d"/>
+        <!-- Texto circular: POLICÍA MUNICIPAL MADRID -->
+        <path id="circle-text-path" d="M80,80 m-52,0 a52,52 0 1,1 104,0 a52,52 0 1,1 -104,0" stroke="none"/>
+        <text font-size="7.5" font-family="'DM Sans',sans-serif" font-weight="600" letter-spacing="2.5" fill="#2d5a2d" opacity="0.38">
+          <textPath href="#circle-text-path" startOffset="8%">POLICÍA MUNICIPAL · MADRID</textPath>
+        </text>
+      </g>
+    </svg>
+  </div>
+  <!-- "Vania" como fondo watermark enorme -->
+  <div class="hero-name-bg" aria-hidden="true">V&thinsp;A&thinsp;N&thinsp;I&thinsp;A</div>
+  <div class="hero-date" id="heroDate">—</div>
+  <div class="hero-name"><em>Rubia.</em></div>
+  <div class="hero-progress">
+    <div class="hero-bar-wrap">
+      <div class="hero-bar-fill" id="heroFill" style="width:0%"></div>
+    </div>
+    <div class="hero-progress-label">
+      <span id="heroPct">0%</span>
+      <span id="heroLabel">0 de 84 días del plan</span>
+    </div>
+  </div>
+  <!-- Racha — llama de líneas + número grande fino -->
+  <div class="hero-racha" id="rachaBadge">
+    <div class="hero-racha-decoration" aria-hidden="true">
+      <svg viewBox="0 0 110 130" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="#2d5a2d" fill="none" opacity="0.32" stroke-linecap="round" stroke-linejoin="round">
+          <!-- Llama exterior grande -->
+          <path d="M55 125 C28 125 12 108 12 88 C12 68 24 58 30 44 C34 34 32 22 35 14 C42 26 40 36 44 46 C46 38 50 28 58 18 C60 30 56 42 62 52 C68 40 70 30 76 22 C80 36 74 52 78 62 C86 52 90 40 88 28 C96 40 98 58 96 72 C98 62 102 54 100 44 C108 58 108 78 102 92 C96 110 78 125 55 125Z" stroke-width="1.1"/>
+          <!-- Llama interior media -->
+          <path d="M55 115 C36 115 24 102 24 86 C24 72 34 64 38 54 C42 46 42 36 46 28 C50 38 48 50 52 58 C54 50 58 40 64 32 C66 44 62 56 68 64 C74 54 76 44 74 34 C82 46 82 62 78 74 C84 66 86 56 84 46 C90 58 88 74 84 86 C80 102 68 115 55 115Z" stroke-width="0.9"/>
+          <!-- Llama interior pequeña — núcleo -->
+          <path d="M55 100 C44 100 36 92 36 82 C36 72 44 66 48 58 C52 66 50 76 54 82 C56 74 60 64 66 56 C68 66 64 78 70 84 C68 96 62 100 55 100Z" stroke-width="0.8"/>
+          <!-- Base de la llama -->
+          <path d="M38 125 Q55 118 72 125" stroke-width="1"/>
+        </g>
+      </svg>
+    </div>
+    <div class="hero-racha-inner">
+      <div class="hero-racha-num" id="rachaBadgeNum">0</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── GRADIENT FADE between hero and nav ── -->
+<div class="hero-fade" aria-hidden="true"></div>
+
+<!-- ── NAV STRIP ── -->
+<nav id="main-nav">
+  <button class="nav-btn active" onclick="goHome(this)">Inicio</button>
+  <button class="nav-btn" onclick="goPage('plan',this)">Mi plan</button>
+  <button class="nav-btn" onclick="goPage('pomo',this)">Pomodoro</button>
+  <button class="nav-btn" onclick="goPage('tests',this)">Tests</button>
+</nav>
+
+<!-- ════ HOME ════ -->
+<div id="p-home" class="page active">
+  <div class="flow">
+
+    <!-- PANEL 1: Frase del día — verde oscuro -->
+    <div class="panel panel-frase">
+      <div class="section-eyebrow">Para hoy</div>
+      <div class="section-title">Tu frase de <em>hoy.</em></div>
+      <div class="quote-day-card">
+        <div class="qd-inner">
+          <div class="qd-day" id="qdDay">—</div>
+          <div class="qd-text" id="qdText"></div>
+          <div class="qd-author" id="qdAuthor"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL 2: Plan de hoy — blanco con profundidad -->
+    <div class="panel panel-plan">
+      <div class="section-eyebrow">Organización</div>
+      <div class="section-title">Lo que toca <em>hoy.</em></div>
+      <div id="dailyPlan"></div>
+      <div id="weekMap"></div>
+    </div>
+
+    <!-- PANEL 3: Tómate un respiro — salvia suave -->
+    <div class="panel panel-respiro">
+      <div class="section-eyebrow">Tómate un respiro</div>
+      <div class="section-title">Dos minutos <em>para ti.</em></div>
+      <div class="fun-card" id="funCard"></div>
+    </div>
+
+    <!-- PANEL 4: Artículo del día — tinta oscura -->
+    <div class="panel panel-constitucion">
+      <div class="section-eyebrow">Constitución · artículo del día</div>
+      <div class="section-title">Para que hoy se te <em>quede.</em></div>
+      <span class="art-counter" id="artCounter"></span>
+      <div id="artCard"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ════ PLAN ════ -->
+<div id="p-plan" class="page">
+  <!-- Hidden stats for JS (updated from hero) -->
+  <span id="pPct" style="display:none"></span>
+  <span id="pFill" style="display:none"></span>
+  <span id="pLabel" style="display:none"></span>
+  <span id="pDias" style="display:none"></span>
+  <span id="pRacha" style="display:none"></span>
+
+  <div class="flow plan-flow">
+    <div id="calArea"></div>
+  </div>
+</div>
+
+<!-- ════ POMODORO ════ -->
+<div id="p-pomo" class="page">
+  <div class="flow">
+    <div class="section-eyebrow">Foco · Sin distracciones</div>
+    <div class="section-title">Tu <em>temporizador.</em></div>
+
+    <div class="pomo-box">
+      <div class="pomo-modes">
+        <button class="pm active" onclick="setPomo(25,this)">25 min</button>
+        <button class="pm" onclick="setPomo(45,this)">45 min</button>
+        <button class="pm" onclick="setPomo(60,this)">60 min</button>
+        <button class="pm" onclick="setPomo(5,this)">5 descanso</button>
+        <button class="pm" onclick="setPomo(10,this)">10 descanso</button>
+      </div>
+      <div class="pomo-lbl" id="pLbl">Bloque de estudio</div>
+      <div class="pomo-time" id="pTime">25:00</div>
+      <div class="pomo-btns">
+        <button class="pb pb-go" onclick="startP()">▶ Iniciar</button>
+        <button class="pb" onclick="pauseP()">⏸ Pausa</button>
+        <button class="pb" onclick="resetP()">↺ Reset</button>
+      </div>
+    </div>
+
+    <div class="card" id="rewardCard"></div>
+  </div>
+</div>
+
+<!-- ════ TESTS ════ -->
+<div id="p-tests" class="page">
+  <div class="flow">
+    <div class="section-eyebrow">Practica · Aprende · Repite</div>
+    <div class="section-title">Tests de <em>hoy.</em></div>
+
+    <div class="week-tabs" id="testTabs">
+      <button class="wtab active" onclick="switchTest('daily',this)">Test del día</button>
+      <button class="wtab" onclick="switchTest('week',this)">Test semanal</button>
+      <button class="wtab" onclick="switchTest('sabado',this)">Examen real</button>
+      <button class="wtab" onclick="switchTest('repaso-panel',this)">Mis tests</button>
+    </div>
+
+    <div id="test-daily"></div>
+    <div id="test-week" style="display:none"></div>
+    <div id="test-sabado" style="display:none"></div>
+
+    <!-- Panel repaso: lista de temas -->
+    <div id="repaso-list" style="display:none">
+      <div class="section-eyebrow" style="margin-bottom:8px">Temas disponibles según tu avance</div>
+      <div id="repaso-panel"></div>
+    </div>
+
+    <!-- Test de repaso activo -->
+    <div id="test-repaso-container" style="display:none"></div>
+  </div>
+</div>
+
+<!-- Scripts: primero data, luego lógica -->
+<script src="data.js"></script>
+<script src="app.js"></script>
+
+</body>
+</html>
