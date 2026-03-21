@@ -1,5 +1,5 @@
 :root {
-  --bg:#f2ede4; --white:#faf7f2; --ink:#1a1816; --ink2:#5a5048; --ink3:#9a8e82;
+  --bg:#f5f0e8; --white:#f5f0e8; --ink:#1a1816; --ink2:#5a5048; --ink3:#9a8e82;
   --border:#ddd6ca; --green:#2d5a2d; --greenl:#e8f2e8; --green2:#4a8a4a;
   --gold:#a67c00; --goldl:#fdf4e0; --red:#b03030; --redl:#fdf0f0;
   --blue:#1a4a8a; --bluel:#eef2fa;
@@ -12,9 +12,9 @@
 /* No body texture — applied only to content flow */
 body { position:relative; }
 .page, header, section { position:relative; }
-/* Papyrus texture on content area only */
-.flow::before {
-  content:''; position:absolute; inset:0; pointer-events:none; z-index:0; border-radius:inherit;
+/* Papyrus texture on body background */
+body::before {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
   background-image: 
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9 0.3' numOctaves='5' seed='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.05'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23p)'/%3E%3C/svg%3E"),
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='4'%3E%3Crect width='200' height='1' y='0' fill='%23a09060' opacity='0.03'/%3E%3Crect width='200' height='1' y='2' fill='%238a7848' opacity='0.02'/%3E%3C/svg%3E");
@@ -31,7 +31,8 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink);
 /* ── HERO → NAV gradient fade ── */
 .hero-fade { height:0; display:none; }
 /* ── MAIN NAV STRIP ── */
-#main-nav { position:sticky; top:0; z-index:200; background:var(--white); border:none; display:flex; align-items:center; justify-content:center; gap:0; padding:0; margin-top:-2px; }
+#main-nav { position:sticky; top:0; z-index:200; background:var(--white); border:none; display:flex; align-items:center; justify-content:center; gap:0; padding:0; margin-top:-2px; overflow:visible; }
+#main-nav::after { content:''; position:absolute; bottom:-20px; left:0; right:0; height:20px; background:linear-gradient(to bottom, rgba(166,124,0,.2) 0%, transparent 100%); pointer-events:none; z-index:99; }
 .nav-btn { background:none; border:none; border-bottom:2px solid transparent; padding:8px 28px; font-family:'DM Sans',sans-serif; font-size:13px; font-weight:500; color:var(--ink3); cursor:pointer; transition:all .18s; white-space:nowrap; letter-spacing:.3px; margin-bottom:-1px; }
 .nav-btn:hover { color:var(--ink); }
 .nav-btn.active { color:var(--ink); font-weight:600; border-bottom-color:var(--green); }
@@ -58,7 +59,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink);
 .hero-date { font-family:'DM Sans',sans-serif; font-size:11px; text-transform:uppercase; letter-spacing:3px; color:var(--ink3); margin-bottom:16px; position:relative; z-index:2; }
 .hero-name { font-family:'Lora',serif; font-size:clamp(52px,8vw,96px); font-weight:700; line-height:.95; letter-spacing:-3px; margin-bottom:28px; position:relative; z-index:2; }
 .hero-name em { font-style:italic; color:var(--green); }
-.hero-progress { width:100%; max-width:440px; margin-bottom:18px; position:relative; z-index:2; }
+.hero-progress { position:absolute; bottom:14px; left:50%; transform:translateX(-50%); width:auto; min-width:320px; max-width:600px; margin:0; z-index:2; }
 .hero-bar-wrap { width:100%; height:3px; background:rgba(180,160,120,.18); border-radius:100px; overflow:hidden; margin-bottom:8px; }
 .hero-bar-fill { height:100%; background:linear-gradient(90deg, var(--green) 0%, #6a9e5a 40%, var(--terra2) 100%); border-radius:100px; transition:width .6s ease; }
 .hero-progress-label { display:flex; justify-content:space-between; font-size:11px; color:var(--ink3); font-family:'DM Sans',sans-serif; letter-spacing:.3px; }
@@ -95,12 +96,13 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink);
 
 /* ── PLAN DIARIO ── */
 .daily-card { background:var(--white); border:1px solid var(--border); border-radius:20px; overflow:hidden; box-shadow:0 2px 16px rgba(0,0,0,.05); }
-.daily-header { background:linear-gradient(135deg, #e8e0d0 0%, #ddd4c0 100%); padding:22px 28px; border-bottom:1px solid #ccc4b0; }
-.daily-header-eyebrow { font-size:9px; text-transform:uppercase; letter-spacing:3px; color:#8a7e6e; font-weight:600; margin-bottom:8px; }
-.daily-header-title { font-family:'Lora',serif; font-size:20px; font-weight:700; color:var(--ink); margin-bottom:4px; line-height:1.2; }
-.daily-header-ley { font-size:11px; color:#7a6e5e; font-style:italic; }
+.daily-header { background:var(--green); padding:22px 28px; border-bottom:none; }
+.daily-header-eyebrow { font-size:9px; text-transform:uppercase; letter-spacing:3px; color:rgba(196,168,78,.85); font-weight:600; margin-bottom:8px; }
+.daily-header-title { font-family:'Lora',serif; font-size:20px; font-weight:700; color:#f0e0a0; margin-bottom:4px; line-height:1.2; }
+.daily-header-ley { font-size:11px; color:rgba(196,168,78,.8); font-style:italic; }
+
 .daily-tag { display:inline-block; margin-top:10px; font-size:10px; padding:3px 12px; border-radius:100px; background:rgba(255,255,255,.15); color:#fff; border:1px solid rgba(255,255,255,.25); letter-spacing:.5px; text-transform:uppercase; }
-.daily-blocks { padding:4px 0; }
+.daily-blocks { padding:0; }
 .daily-block { display:flex; gap:0; align-items:stretch; border-bottom:1px solid var(--border); position:relative; overflow:hidden; }
 .daily-block:last-child { border-bottom:none; }
 .db-slot { display:flex; flex-direction:column; align-items:center; gap:4px; flex-shrink:0; width:52px; }
@@ -112,7 +114,9 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink);
 .db-bar { position:absolute; left:0; top:0; bottom:0; width:90px; pointer-events:none; }
 .db-bar.gold  { background:linear-gradient(to right, rgba(166,124,0,.18) 0%, transparent 100%); }
 .db-bar.green { background:linear-gradient(to right, rgba(74,138,74,.18) 0%, transparent 100%); }
-.db-bar.blue  { background:linear-gradient(to right, rgba(96,144,192,.18) 0%, transparent 100%); }
+.db-bar.blue  { background:linear-gradient(to right, rgba(130,80,200,.28) 0%, rgba(130,80,200,.08) 40%, transparent 70%); }
+.db-bar.rest  { background:linear-gradient(to right, rgba(0,180,200,.28) 0%, rgba(0,180,200,.08) 40%, transparent 70%); }
+.db-content.is-rest { opacity:.7; }
 /* Time and body layout */
 .db-content { display:flex; align-items:baseline; gap:14px; padding:18px 28px; width:100%; }
 .db-time-inline { font-family:'Lora',serif; font-size:13px; color:var(--ink3); font-weight:600; white-space:nowrap; flex-shrink:0; min-width:38px; }
@@ -124,8 +128,9 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink);
 .db-title { font-size:14px; font-weight:600; color:var(--ink); margin-bottom:4px; }
 .db-desc { font-size:13px; color:var(--ink2); line-height:1.75; }
 .db-sub { font-size:12px; color:var(--ink3); margin-top:5px; font-style:italic; }
-.daily-footer { padding:16px 28px; border-top:1px solid var(--border); background:var(--bg); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; }
-.daily-footer span { font-size:13px; color:var(--ink2); }
+.daily-footer { padding:14px 28px; background:var(--green); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; }
+.daily-footer span { font-size:13px; color:rgba(196,168,78,.9); }
+.daily-footer .df-total { color:#f0e0a0; font-weight:600; }
 .df-total { font-family:'Lora',serif; font-size:16px; font-weight:700; color:var(--green); }
 .rest-card { background:var(--white); border:1px solid var(--border); border-radius:20px; padding:52px 40px; text-align:center; }
 .rest-card h2 { font-family:'Lora',serif; font-size:30px; font-weight:700; margin-bottom:12px; }
@@ -190,7 +195,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink);
 
 /* ── PLAN CALENDAR ── */
 .plan-flow { padding-top:32px; }
-.month-block { background:var(--white); border:1.5px solid var(--border); border-radius:20px; margin-bottom:14px; overflow:hidden; box-shadow:0 2px 16px rgba(0,0,0,.06); }
+.month-block { background:var(--white); border:none; border-radius:20px; margin-bottom:14px; overflow:hidden; box-shadow: 0 6px 20px rgba(0,0,0,.10), 0 1px 4px rgba(0,0,0,.06); }
 .month-head { display:flex; align-items:center; gap:16px; padding:18px 26px; cursor:pointer; transition:background .15s; background:var(--green); }
 .month-head:hover { background:#254525; }
 .m-num { width:48px; height:48px; border-radius:14px; display:flex; align-items:center; justify-content:center; flex-shrink:0; overflow:hidden; }
@@ -200,31 +205,16 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink);
 /* SVG botanical badges replace numbers */
 .m-num svg { width:32px; height:32px; }
 .m-text { flex:1; }
-.m-title { font-family:'Lora',serif; font-size:15px; font-weight:700; color:#fff; }
+.m-title { font-family:'Lora',serif; font-size:15px; font-weight:700; color:#ede4cc; }
 .m-sub { font-size:11px; color:#e8d898; margin-top:2px; }
 .m-chev { color:rgba(237,228,204,.6); font-size:13px; transition:transform .3s; }
 .m-chev.open { transform:rotate(180deg); }
-.month-body { display:none; border-top:1px solid #d4c8b0; padding:12px 20px 20px; background:#f5f0e8; }
+.month-body { display:none; border-top:none; padding:12px 20px 20px; background:#f5f0e8; }
 .month-body.open { display:block; }
 .week-row { margin-top:10px; padding:16px 18px; border-radius:14px; border:1px solid rgba(196,168,78,.12); position:relative; overflow:hidden; }
 /* Botanical backgrounds per week — cycling through 4 variants */
-/* 16 semanas — fondo crema, texto legible */
-.week-row:nth-child(1)  { background:linear-gradient(to left, #f0ebe0, #e8e2d8); border-color:#d4c8b4; }
-.week-row:nth-child(2)  { background:linear-gradient(to left, #edf0e8, #e4ead8); border-color:#c8d4b8; }
-.week-row:nth-child(3)  { background:linear-gradient(to left, #f2ede0, #ebe5d4); border-color:#d8ccb0; }
-.week-row:nth-child(4)  { background:linear-gradient(to left, #e8eee8, #dde8dc); border-color:#b8d0bc; }
-.week-row:nth-child(5)  { background:linear-gradient(to left, #f4efe0, #ece6d0); border-color:#d8c8a0; }
-.week-row:nth-child(6)  { background:linear-gradient(to left, #eaeee4, #e0e8d8); border-color:#c0d0b4; }
-.week-row:nth-child(7)  { background:linear-gradient(to left, #f0ece0, #e8e4d4); border-color:#d4c8b0; }
-.week-row:nth-child(8)  { background:linear-gradient(to left, #e8ede8, #dce8dc); border-color:#b4ccb8; }
-.week-row:nth-child(9)  { background:linear-gradient(to left, #f2ede4, #eae5d8); border-color:#d0c4b0; }
-.week-row:nth-child(10) { background:linear-gradient(to left, #eaede4, #e2e8d8); border-color:#bccdb8; }
-.week-row:nth-child(11) { background:linear-gradient(to left, #f0eee0, #e8e8d4); border-color:#d4d0a8; }
-.week-row:nth-child(12) { background:linear-gradient(to left, #e8ede4, #dde8dc); border-color:#b8ccb8; }
-.week-row:nth-child(13) { background:linear-gradient(to left, #f4f0e4, #ece8d4); border-color:#d8d0a8; }
-.week-row:nth-child(14) { background:linear-gradient(to left, #eaede8, #e0e8e0); border-color:#b8ccbc; }
-.week-row:nth-child(15) { background:linear-gradient(to left, #f0ece4, #e8e4d8); border-color:#d0c8b4; }
-.week-row:nth-child(16) { background:linear-gradient(to left, #ecede4, #e2e8d8); border-color:#bcceb8; }
+/* 16 semanas — flotando sobre el fondo */
+.week-row { background:#f5f0e8; border:none; box-shadow: 0 4px 12px rgba(0,0,0,.12), 0 1px 3px rgba(0,0,0,.08); }
 /* Botanical SVG watermark on each week row */
 .week-row::before { content:''; position:absolute; right:-8px; bottom:-8px; width:80px; height:80px; opacity:.12;
   background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 80'%3E%3Cg stroke='%232d5a2d' stroke-width='1' fill='none'%3E%3Cellipse cx='40' cy='55' rx='14' ry='30' transform='rotate(-5 40 55)'/%3E%3Cellipse cx='55' cy='45' rx='10' ry='22' transform='rotate(18 55 45)'/%3E%3Cellipse cx='26' cy='50' rx='9' ry='20' transform='rotate(-22 26 50)'/%3E%3Cline x1='40' y1='80' x2='40' y2='25' stroke-width='1.2'/%3E%3Cline x1='55' y1='78' x2='55' y2='23' stroke-width='1.2'/%3E%3Cline x1='26' y1='78' x2='26' y2='30' stroke-width='1.2'/%3E%3C/g%3E%3C/svg%3E") no-repeat center; background-size:contain; pointer-events:none; }
@@ -242,7 +232,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink);
 .dc-chk { display:none; font-size:16px; color:#fff; align-items:center; justify-content:center; font-weight:700; }
 
 /* ── POMODORO ── */
-.pomo-box { background:var(--white); border:1px solid var(--border); border-radius:20px; padding:26px 30px; margin-bottom:20px; text-align:center; }
+.pomo-box { background:var(--white); border:none; border-radius:20px; padding:26px 30px; margin-bottom:20px; text-align:center; box-shadow: 0 6px 20px rgba(0,0,0,.10), 0 1px 4px rgba(0,0,0,.06); }
 .pomo-modes { display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin-bottom:12px; }
 .pm { padding:6px 14px; border-radius:100px; border:1.5px solid var(--border); background:transparent; color:var(--ink2); font-size:13px; cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .2s; }
 .pm:hover { border-color:var(--green); color:var(--green); }
@@ -453,7 +443,8 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink);
 /* Panel 1 — Frase del día: crema cálido con hojas botánicas */
 .panel-frase {
   background: linear-gradient(160deg, #e8e0d0 0%, #ddd4c0 100%);
-  border: 1px solid #ccc4b0;
+  border: none;
+  box-shadow: 0 8px 32px rgba(180,155,100,.3), 0 2px 8px rgba(180,155,100,.15);
 }
 .panel-frase::after {
   right:-20px; bottom:-30px; width:320px; height:320px;
@@ -476,8 +467,8 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink);
 /* Panel 2 — Plan: blanco con hojas verdes tenues */
 .panel-plan {
   background: var(--white);
-  border: 1px solid var(--border);
-  box-shadow: 0 8px 40px rgba(0,0,0,.06), 0 2px 8px rgba(0,0,0,.04);
+  border: none;
+  box-shadow: 0 8px 32px rgba(45,90,45,.15), 0 2px 8px rgba(45,90,45,.08);
 }
 .panel-plan::after {
   left:-10px; top:20px; width:200px; height:300px;
@@ -490,7 +481,8 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink);
 /* Panel 3 — Respiro: terracota rosada cálida */
 .panel-respiro {
   background: linear-gradient(150deg, #e8d4cc 0%, #dfc8bc 100%);
-  border: 1px solid #d4b8ae;
+  border: none;
+  box-shadow: 0 8px 32px rgba(139,74,58,.25), 0 2px 8px rgba(139,74,58,.12);
 }
 .panel-respiro::after {
   right:-15px; bottom:-20px; width:260px; height:260px;
@@ -509,10 +501,12 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink);
 /* Panel 4 — Artículo CE: verde oscuro con acento dorado */
 .panel-constitucion {
   background: linear-gradient(150deg, #141f14 0%, #0f180f 100%);
-  border: 1px solid #1e2e1e;
+  border: none;
+  box-shadow: 0 8px 32px rgba(10,18,10,.45), 0 2px 8px rgba(196,168,78,.08);
 }
+.panel-constitucion-botanical-left { position:absolute; left:0; top:0; bottom:0; width:80px; opacity:.06; pointer-events:none; }
 .panel-constitucion::after {
-  right:-20px; top:10px; width:280px; height:380px;
+  left:-20px; right:auto; top:10px; width:280px; height:380px;
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 280 380'%3E%3Cg fill='none' stroke='%23c4a84e' stroke-width='0.7' opacity='0.15'%3E%3Cellipse cx='140' cy='200' rx='50' ry='120' transform='rotate(-5 140 200)'/%3E%3Cellipse cx='180' cy='160' rx='38' ry='90' transform='rotate(18 180 160)'/%3E%3Cellipse cx='100' cy='190' rx='32' ry='80' transform='rotate(-25 100 190)'/%3E%3Cline x1='140' y1='320' x2='140' y2='80' stroke-width='1.3'/%3E%3Cline x1='180' y1='290' x2='180' y2='70' stroke-width='1.3'/%3E%3Cline x1='100' y1='310' x2='100' y2='110' stroke-width='1.3'/%3E%3Cellipse cx='220' cy='230' rx='25' ry='60' transform='rotate(30 220 230)'/%3E%3C/g%3E%3C/svg%3E") no-repeat center;
   background-size: contain;
 }
@@ -569,11 +563,11 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink);
 .ddp-inner { background:var(--white); border:1.5px solid var(--border); border-radius:20px; overflow:hidden; box-shadow:0 12px 40px rgba(0,0,0,.13), 0 2px 8px rgba(0,0,0,.06); }
 
 /* Header — warm crema matching plan hero */
-.ddp-header { background:linear-gradient(145deg,#e4ddd0,#d8d0c0); padding:18px 22px 16px; display:flex; align-items:flex-start; justify-content:space-between; gap:10px; border-bottom:1px solid #ccc4b0; }
+.ddp-header { background:linear-gradient(145deg,#c4a84e,#a89038); padding:18px 22px 16px; display:flex; align-items:flex-start; justify-content:space-between; gap:10px; border-bottom:1px solid #a89038; }
 .ddp-header-left { flex:1; }
-.ddp-day-pill { display:inline-block; font-size:9px; text-transform:uppercase; letter-spacing:2.5px; color:#8a7e6e; font-weight:600; margin-bottom:6px; }
-.ddp-title { font-family:'Lora',serif; font-size:15px; font-weight:700; color:var(--ink); line-height:1.25; }
-.ddp-close { background:rgba(0,0,0,.08); border:none; color:var(--ink3); cursor:pointer; width:24px; height:24px; border-radius:50%; font-size:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all .15s; }
+.ddp-day-pill { display:inline-block; font-size:9px; text-transform:uppercase; letter-spacing:2.5px; color:rgba(78,52,41,.6); font-weight:600; margin-bottom:6px; }
+.ddp-title { font-family:'Lora',serif; font-size:15px; font-weight:700; color:#4e3429; line-height:1.25; }
+.ddp-close { background:rgba(255,255,255,.2); border:none; color:#fff; cursor:pointer; width:24px; height:24px; border-radius:50%; font-size:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; transition:all .15s; }
 .ddp-close:hover { background:rgba(0,0,0,.15); color:var(--ink); }
 
 /* Apuntes reference — warm gold strip */
@@ -583,9 +577,9 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink);
 
 /* Body */
 .ddp-body { padding:16px 22px 18px; }
-.ddp-section-label { font-size:9px; text-transform:uppercase; letter-spacing:2.5px; color:var(--ink3); font-weight:600; margin-bottom:7px; }
+.ddp-section-label { font-size:9px; text-transform:uppercase; letter-spacing:2.5px; color:#a89038; font-weight:600; margin-bottom:7px; }
 .ddp-list { list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:4px; }
-.ddp-concept { font-size:12px; color:var(--ink); padding:6px 10px 6px 11px; background:var(--greenl); border-radius:7px; border-left:2.5px solid var(--green2); line-height:1.45; }
+.ddp-concept { font-size:12px; color:var(--ink); padding:6px 10px 6px 11px; background:#fdf4e0; border-radius:7px; border-left:2.5px solid #c4a84e; line-height:1.45; }
 
 /* Truco — sage green, NOT terracotta (more readable) */
 .ddp-truco-wrap { margin-top:12px; }
@@ -595,8 +589,8 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink);
 .ddp-btns { padding:14px 22px 18px; display:flex; flex-direction:row; gap:8px; }
 .ddp-btn { flex:1; background:#6b4c3b; color:#fff; border:none; border-radius:100px; padding:9px 14px; font-family:'DM Sans',sans-serif; font-size:11px; font-weight:600; cursor:pointer; transition:all .2s; letter-spacing:.3px; text-align:center; white-space:nowrap; }
 .ddp-btn:hover { background:#4e3429; }
-.ddp-btn-secondary { background:transparent; color:#6b4c3b; border:1.5px solid #c4a898; }
-.ddp-btn-secondary:hover { background:#f5ede8; }
+.ddp-btn-secondary { background:transparent; color:#a89038; border:1.5px solid #c4a84e; }
+.ddp-btn-secondary:hover { background:#fdf4e0; }
 
 /* Dot on done cells */
 .day-cell.has-topic.done { position:relative; }
@@ -625,7 +619,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink);
 
 /* ── ARTICLE NUMBER DRAWINGS ── */
 /* SVG número dibujado a mano aparece como fondo decorativo en panel CE */
-.panel-constitucion .art-num-drawing { position:absolute; left:20px; top:50%; transform:translateY(-50%); opacity:.07; font-family:'Lora',serif; font-size:110px; font-weight:700; color:#c4a84e; line-height:1; pointer-events:none; z-index:0; }
+.panel-constitucion .art-num-drawing { position:absolute; right:20px; top:16px; transform:none; opacity:.09; font-family:'Lora',serif; font-size:80px; font-weight:700; color:#c4a84e; line-height:1; pointer-events:none; z-index:0; }
 .panel-constitucion .art-card { position:relative; z-index:1; }
 
 /* ── VISTA SEMANAL ── */
@@ -649,3 +643,127 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--ink);
 .wp-day-topic { font-family:'Lora',serif; font-size:12px; font-weight:700; color:var(--ink); margin-bottom:3px; line-height:1.3; }
 .wp-day-ley { font-size:10px; color:var(--ink3); font-style:italic; line-height:1.4; }
 .wp-today .wp-day-topic { color:var(--green); }
+
+/* ── HERO SUBTITLE PHRASE ── */
+.hero-sub-phrase { font-family:'Lora',serif; font-style:italic; font-size:13px; color:rgba(45,90,45,.45); margin-top:-20px; margin-bottom:16px; position:relative; z-index:2; letter-spacing:.3px; }
+/* ── REWARD PARAGRAPH ── */
+.reward-para-card { background:linear-gradient(135deg,#1c3d1f,#152e17); border-radius:18px; padding:24px 28px; margin:16px 22px; position:relative; overflow:hidden; }
+.reward-para-card::before { content:''; position:absolute; right:-10px; bottom:-10px; width:80px; height:80px; opacity:.08;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 80'%3E%3Cg stroke='%238fd68f' stroke-width='1' fill='none'%3E%3Cellipse cx='40' cy='55' rx='14' ry='30' transform='rotate(-5 40 55)'/%3E%3Cline x1='40' y1='80' x2='40' y2='25' stroke-width='1.2'/%3E%3C/g%3E%3C/svg%3E") no-repeat; }
+.reward-para-label { font-size:9px; text-transform:uppercase; letter-spacing:2.5px; color:rgba(180,220,180,.5); font-weight:600; margin-bottom:10px; }
+.reward-para-text { font-family:'Lora',serif; font-size:14px; font-style:italic; color:#e8f0e8; line-height:1.85; }
+.reward-para-sign { font-size:11px; color:rgba(180,220,180,.45); margin-top:12px; text-align:right; letter-spacing:.5px; }
+.reward-locked-msg { font-size:12px; color:var(--ink3); text-align:center; padding:16px 22px; font-style:italic; }
+
+/* ── REWARD PARA CARD — mensaje de Sara ── */
+.reward-para-card { background:linear-gradient(135deg,#1a2e1a,#141f14); border-radius:16px; padding:20px 22px; margin-bottom:16px; }
+.reward-para-label { font-size:9px; text-transform:uppercase; letter-spacing:3px; color:rgba(196,168,78,.6); font-weight:600; margin-bottom:10px; }
+.reward-para-text { font-family:'Lora',serif; font-size:14px; color:#e8dfc8; line-height:1.85; font-style:italic; margin-bottom:10px; }
+.reward-para-sign { font-size:11px; color:rgba(196,168,78,.7); font-weight:600; letter-spacing:1px; text-align:right; }
+
+/* Subfrase bajo Rubia */
+.hero-subfrase { font-size:12px; color:rgba(45,90,45,.45); letter-spacing:3px; text-transform:uppercase; font-family:'DM Sans',sans-serif; font-weight:500; margin-top:-18px; margin-bottom:20px; position:relative; z-index:2; }
+
+
+/* ── REWARD LOCKED CARD ── */
+.reward-locked-card { text-align:center; padding:32px 24px; }
+.reward-locked-icon { font-size:32px; margin-bottom:12px; opacity:.4; }
+.reward-locked-title { font-family:'Lora',serif; font-size:18px; font-weight:700; color:var(--ink); margin-bottom:8px; }
+.reward-locked-msg { font-size:13px; color:var(--ink2); line-height:1.7; }
+
+/* Fix reward-para-sign */
+.reward-para-sign { font-size:12px; color:rgba(196,168,78,.8); font-weight:600; letter-spacing:1px; text-align:right; margin-top:10px; }
+
+/* ── WEEK DAY DETAIL — desglose diario en calendario ── */
+.week-days-detail { display:flex; flex-direction:column; gap:4px; margin-bottom:12px; }
+.week-day-detail { display:flex; align-items:baseline; gap:8px; padding:5px 10px; border-radius:8px; background:rgba(255,255,255,.55); }
+.week-day-letter { font-size:9px; text-transform:uppercase; letter-spacing:2px; font-weight:700; color:var(--green2); flex-shrink:0; min-width:14px; }
+.week-day-topic { font-family:'Lora',serif; font-size:12px; font-weight:600; color:var(--ink); flex:1; line-height:1.3; }
+.week-day-ley { font-size:10px; color:var(--ink3); font-style:italic; flex-shrink:0; white-space:nowrap; }
+
+/* Lunes siempre destacado — no es CE */
+.week-day-detail:first-child .week-day-letter { color:var(--terra2); }
+.week-day-detail:first-child { background:rgba(200,180,160,.15); }
+
+/* ── DAY BLOCKS — nuevo calendario clicable ── */
+.week-day-blocks { display:flex; flex-direction:column; gap:6px; }
+
+.day-block { 
+  display:flex; align-items:center; gap:14px;
+  padding:12px 16px; border-radius:12px;
+  background:var(--white); border:1.5px solid var(--border);
+  cursor:pointer; transition:all .2s; position:relative; overflow:hidden;
+  box-shadow:0 1px 4px rgba(0,0,0,.04);
+}
+.day-block::before {
+  content:''; position:absolute; left:0; top:0; bottom:0; width:64px;
+  background:linear-gradient(to right, rgba(166,124,0,.45) 0%, rgba(166,124,0,.15) 50%, transparent 100%);
+  border-radius:10px 0 0 10px;
+  pointer-events:none;
+}
+.day-block:hover { border-color:var(--green2); background:var(--greenl); }
+.day-block.done { 
+  background:linear-gradient(135deg, rgba(196,168,78,.2), rgba(166,138,48,.12));
+  border-color:#c4a84e;
+}
+.day-block.done .day-block-titulo { color:#6a5000; }
+.day-block.done .day-block-ley { color:#a07820; }
+.day-block.done .day-block-letter { color:#c4a84e; border-color:#c4a84e; }
+.day-block.done .day-block-dayname { color:#c4a84e; }
+
+/* Monday highlight */
+.day-block:first-child { }
+
+
+.day-block-left { display:flex; flex-direction:column; align-items:center; flex-shrink:0; min-width:48px; }
+.day-block-letter { 
+  font-size:28px; font-weight:700;
+  color:var(--green); line-height:1; border:none; padding:0; border-radius:0;
+}
+.day-block-dayname { display:none; }
+
+.day-block-body { flex:1; }
+.day-block-titulo { font-family:'Lora',serif; font-size:13px; font-weight:700; color:var(--ink); line-height:1.3; }
+.day-block-ley { font-size:10px; color:var(--ink3); font-style:italic; margin-top:2px; }
+
+.day-block-check { 
+  font-size:16px; color:var(--green); opacity:0; transition:opacity .2s; flex-shrink:0;
+}
+.day-block.done .day-block-check { opacity:1; color:var(--green); }
+
+/* Prep panel inside week row — below day blocks */
+.week-prep-strip {
+  margin-top:12px; padding:12px 16px;
+  background:linear-gradient(135deg,#2d5a30,#1c3d1f);
+  border-radius:10px;
+  display:grid; grid-template-columns:repeat(2,1fr); gap:6px 20px;
+}
+.week-prep-strip-label { font-size:9px; text-transform:uppercase; letter-spacing:2px; color:rgba(210,240,210,.65); font-weight:600; grid-column:1/-1; margin-bottom:2px; }
+.week-prep-item { font-size:11px; color:rgba(230,255,230,.85); padding-left:10px; position:relative; line-height:1.5; }
+.week-prep-item::before { content:'—'; position:absolute; left:0; color:rgba(180,220,180,.5); font-size:9px; }
+
+/* Reward card — sin fondo cuando muestra el párrafo */
+#rewardCard:has(.reward-para-card) {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+/* ── TESTS — sombra verde, sin borde ── */
+.test-container, .repaso-card {
+  border: none !important;
+  box-shadow: 0 8px 28px rgba(45,90,45,.12), 0 2px 6px rgba(45,90,45,.07) !important;
+}
+
+/* ── PANEL INNER CARDS — sombra del color del panel ── */
+.panel-frase .quote-day-card { border:none; box-shadow:0 6px 20px rgba(180,155,100,.2), 0 2px 6px rgba(180,155,100,.1); }
+.panel-respiro .fun-card { border:none !important; box-shadow:0 6px 20px rgba(139,74,58,.2), 0 2px 6px rgba(139,74,58,.1) !important; }
+.panel-constitucion .art-card { border:1px solid rgba(196,168,78,.3) !important; box-shadow:none !important; }
+.panel-constitucion .joke-box { border:1px solid rgba(196,168,78,.25) !important; box-shadow:none !important; }
+
+/* ── TEST BLOQUEADO ── */
+.test-locked-msg { text-align:center; padding:52px 32px; }
+.test-locked-icon { font-size:36px; margin-bottom:16px; opacity:.4; }
+.test-locked-title { font-family:'Lora',serif; font-size:20px; font-weight:700; color:var(--ink); margin-bottom:10px; }
+.test-locked-sub { font-size:13px; color:var(--ink2); line-height:1.7; max-width:280px; margin:0 auto; }

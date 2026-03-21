@@ -14,6 +14,7 @@ const startDate = new Date('2026-03-22'); startDate.setHours(0,0,0,0);
 const dLeft  = Math.max(0, Math.round((exam - today) / 86400000));
 const dow    = today.getDay();
 const dayIndex = Math.max(0, Math.min(Math.round((today - startDate) / 86400000), QUOTES.length - 1));
+const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 86400000);
 
 // cuenta atrás eliminada — sin presión
 
@@ -52,13 +53,19 @@ document.addEventListener('click', e => {
   if (!e.target.closest('.tb-dropdown')) closeAllDD();
 });
 
-// ── FRASE DEL DÍA ──
-const todayQ = QUOTES[dayIndex];
-document.getElementById('qdDay').textContent  = `Día ${dayIndex + 1} · ${WD[dow]} ${today.getDate()} de ${MN[today.getMonth()]}`;
+// ── FECHA Y HÉROE ──
 const heroDateEl = document.getElementById('heroDate');
 if (heroDateEl) heroDateEl.textContent = `${WD[dow]} ${today.getDate()} de ${MN[today.getMonth()]} de ${today.getFullYear()}`;
-document.getElementById('qdText').textContent = `"${todayQ.t}"`;
-document.getElementById('qdAuthor').textContent = todayQ.a;
+const RUBIA_SUBS = [
+  "Hoy también.", "Sin excusas.", "Un día más cerca.",
+  "El examen no se aprueba solo.", "Vamos.", "Cada día cuenta.",
+  "Nadie te quita lo que sabes.", "El Atleti tampoco se rinde.",
+  "Nadie pasa sin que yo lo sepa.", // Cypher en español
+  "Ningún secreto está a salvo. Ningún movimiento pasa desapercibido.", // Cypher
+  "Con información, se gana.", "El router está enchufado.",
+];
+const subEl = document.getElementById('heroSubfrase');
+if (subEl) subEl.textContent = RUBIA_SUBS[dayOfYear % RUBIA_SUBS.length];
 
 // ── RESPIRO DEL DÍA ──
 const fun = FUNS[today.getDate() % FUNS.length];
@@ -73,7 +80,6 @@ document.getElementById('funCard').innerHTML = `
 // ── ARTÍCULO DEL DÍA ──
 // Un artículo por día — rota sola, sin menú, sin decisión
 // Día del año (1-365) para rotar entre los 169 artículos sin repetir en meses consecutivos
-const dayOfYear = Math.floor((today - new Date(today.getFullYear(), 0, 0)) / 86400000);
 const artIdx = (dayOfYear - 1) % ARTICLES.length;
 
 function renderArt() {
@@ -83,7 +89,7 @@ function renderArt() {
   document.getElementById('artCard').innerHTML = `
     <div class="art-card">
       <div class="art-num-drawing" aria-hidden="true">${artNumOnly}</div>
-      <div class="art-num">${a.tag} · ${a.num}</div>
+      <div class="art-num">${a.tag}</div>
       <div class="art-title">${a.title}</div>
       <div class="art-text">${a.text}</div>
       <div class="joke-box">
@@ -93,7 +99,7 @@ function renderArt() {
     </div>`;
   // Solo muestra cuál es, sin botones de navegación
   const counter = document.getElementById('artCounter');
-  if (counter) counter.textContent = `Artículo del día`;
+  if (counter) counter.textContent = ``; // eyebrow ya lo dice
 }
 
 renderArt();
@@ -116,61 +122,71 @@ const tomorrowWeek     = Math.floor(tomorrowStudyDay / 5);
 const wt = WEEK_THEMES[Math.min(tomorrowWeek, WEEK_THEMES.length - 1)];
 
 const DAY_SCHEDULES = {
-  1: { // Lunes
+  1: { // Lunes — hasta las 14:00
     blocks: [
-      {time:"9:00",  icon:"☕", title:"Ritual de inicio",        desc:"Café, agua, mismo sitio de siempre. Sin móvil encima. Estás lista.", sub:"10 min", dot:"gold"},
-      {time:"9:10",  icon:"📖", title:"Bloque de teoría — Parte 1", desc:`<strong>${wt.mat}</strong>: ${wt.detail}`, sub:"Lectura activa · 50 min", dot:"green"},
-      {time:"10:00", icon:"⏸", title:"Descanso",                 desc:"Levántate. Estira. Agua. Nada de móvil todavía.", sub:"5 min", dot:""},
-      {time:"10:05", icon:"📖", title:"Bloque de teoría — Parte 2", desc:"Continúa. Esquema en papel de lo que acabas de leer. Lo que salga sin mirar.", sub:"45 min", dot:"green"},
-      {time:"10:50", icon:"⏸", title:"Descanso",                 desc:"Este sí, móvil incluido. 10 minutos libres.", sub:"10 min", dot:""},
-      {time:"11:00", icon:"📝", title:"Test del tema",            desc:"Abre Tests → Test del día. Preguntas del tema de esta semana. Corrígelo con calma.", sub:"30 min", dot:"blue"},
-      {time:"11:30", icon:"✅", title:"Marca el día",             desc:"Cuando acabes, ve a Mi Plan y márcalo.", sub:"", dot:"gold"},
+      {time:"9:00",  title:"Ritual de inicio",        desc:"Café, agua, mismo sitio de siempre. Sin móvil encima. Estás lista.", sub:"10 min", dot:"gold"},
+      {time:"9:10",  title:"Bloque de teoría — Parte 1", desc:`<strong>#{TITULO}</strong> — #{LEY}`, sub:"Lectura activa · 60 min", dot:"green"},
+      {time:"10:10", title:"Descanso",                desc:"Levántate. Estira. Agua. Nada de móvil todavía.", sub:"20 min", dot:"rest"},
+      {time:"10:30", title:"Bloque de teoría — Parte 2", desc:"Continúa donde lo dejaste.", sub:"70 min", dot:"green"},
+      {time:"11:40", title:"Descanso",                desc:"Móvil 10 minutos. Aire fresco si puedes.", sub:"10 min", dot:"rest"},
+      {time:"11:50", title:"Test del día",             desc:"Abre Tests → Test del día. Preguntas del tema. Corrígelo con calma.", sub:"35 min", dot:"blue"},
+      {time:"12:25", title:"Descanso",                desc:"Come algo. Desconecta de verdad.", sub:"20 min", dot:"rest"},
+      {time:"12:45", title:"Hora del examen",         desc:"15 preguntas mixtas de todo lo estudiado esta semana. Sin mirar nada.", sub:"15 min", dot:"blue"},
+      {time:"13:00", title:"Marca el día",             desc:"Ve a Mi Plan y márcalo. Te lo has ganado.", sub:"", dot:"gold"},
     ],
-    total: "~2h 30min"
+    total: "~4h"
   },
-  2: { // Martes
+  2: { // Martes — hasta las 14:00
     blocks: [
-      {time:"9:00",  icon:"☕", title:"Ritual de inicio",         desc:"El mismo de siempre.", sub:"10 min", dot:"gold"},
-      {time:"9:10",  icon:"📖", title:"Bloque de teoría",         desc:`<strong>${wt.mat}</strong> — hoy profundiza en los detalles que ayer pasaste rápido.`, sub:"60 min", dot:"green"},
-      {time:"10:10", icon:"⏸", title:"Descanso",                  desc:"Levántate, estira, agua.", sub:"10 min", dot:""},
-      {time:"10:20", icon:"🎤", title:"Explícalo en voz alta",    desc:"Explica el tema como si le enseñaras a alguien. A la pared, a una amiga, a nadie. Retiene más que leer.", sub:"30 min", dot:"green"},
-      {time:"10:50", icon:"📝", title:"Test del tema",            desc:"Tests → Test del día.", sub:"30 min", dot:"blue"},
-      {time:"11:20", icon:"✅", title:"Marca el día",             desc:"Va. Confeti ganado.", sub:"", dot:"gold"},
+      {time:"9:00",  title:"Ritual de inicio",        desc:"El mismo de siempre.", sub:"10 min", dot:"gold"},
+      {time:"9:10",  title:"Bloque de teoría — Parte 1", desc:`<strong>#{TITULO}</strong> — #{LEY}. Profundiza en los detalles de ayer.`, sub:"70 min", dot:"green"},
+      {time:"10:20", title:"Descanso",                desc:"Levántate, estira, agua.", sub:"20 min", dot:"rest"},
+      {time:"10:40", title:"Bloque de teoría — Parte 2", desc:"Segundo bloque. Sigue el hilo.", sub:"10 min", dot:"green"},
+      {time:"10:50", title:"Test del día",             desc:"Tests → Test del día.", sub:"35 min", dot:"blue"},
+      {time:"11:25", title:"Descanso",                desc:"20 minutos libres. De verdad.", sub:"20 min", dot:"rest"},
+      {time:"11:45", title:"Bloque de teoría — Parte 3", desc:"Esquema del tema completo. Sin mirar. Lo que no salga: búscalo y anótalo.", sub:"60 min", dot:"green"},
+      {time:"12:45", title:"Marca el día",             desc:"Hecho. A por el miércoles.", sub:"", dot:"gold"},
     ],
-    total: "~2h 20min"
+    total: "~3h 45min"
   },
-  3: { // Miércoles
+  3: { // Miércoles — hasta las 14:00
     blocks: [
-      {time:"9:00",  icon:"☕", title:"Ritual de inicio",         desc:"El de siempre.", sub:"10 min", dot:"gold"},
-      {time:"9:10",  icon:"📖", title:"Bloque de teoría",         desc:`Mitad de semana. <strong>${wt.mat}</strong>. Si estás cansada: 25 min + 5 descanso + 25 min.`, sub:"55 min con Pomodoro", dot:"green"},
-      {time:"10:05", icon:"⏸", title:"Descanso",                  desc:"10 minutos. Importante.", sub:"10 min", dot:""},
-      {time:"10:15", icon:"✍️", title:"Mapa mental",              desc:"Dibuja en papel un mapa mental del tema sin mirar nada. Lo que sale de memoria es lo que ya sabes.", sub:"30 min", dot:"green"},
-      {time:"10:45", icon:"📝", title:"Test del tema",            desc:"Tests → Test del día.", sub:"30 min", dot:"blue"},
-      {time:"11:15", icon:"✅", title:"Marca el día",             desc:"Tres de tres esta semana.", sub:"", dot:"gold"},
+      {time:"9:00",  title:"Ritual de inicio",        desc:"El de siempre.", sub:"10 min", dot:"gold"},
+      {time:"9:10",  title:"Bloque de teoría — Parte 1", desc:`<strong>#{TITULO}</strong> — #{LEY}. Pomodoro: 25+5+25+5+25.`, sub:"85 min", dot:"green"},
+      {time:"10:35", title:"Descanso",                desc:"20 minutos. Importante.", sub:"20 min", dot:"rest"},
+      {time:"10:55", title:"Mapa mental",              desc:"Dibuja en papel un mapa mental del tema sin mirar nada. Lo que sale de memoria es lo que ya sabes.", sub:"20 min", dot:"green"},
+      {time:"11:15", title:"Test del día",             desc:"Tests → Test del día.", sub:"35 min", dot:"blue"},
+      {time:"11:50", title:"Descanso",                desc:"20 minutos reales.", sub:"20 min", dot:"rest"},
+      {time:"12:10", title:"Bloque de teoría — Parte 2", desc:"Repasa los conceptos del mapa mental que no te salieron. Solo esos.", sub:"35 min", dot:"green"},
+      {time:"12:45", title:"Marca el día",             desc:"Tres de tres. Bien.", sub:"", dot:"gold"},
     ],
-    total: "~2h 15min"
+    total: "~3h 45min"
   },
-  4: { // Jueves
+  4: { // Jueves — hasta las 14:00
     blocks: [
-      {time:"9:00",  icon:"☕", title:"Ritual de inicio",         desc:"El de siempre.", sub:"10 min", dot:"gold"},
-      {time:"9:10",  icon:"📖", title:"Bloque de teoría",         desc:`Cuarto día. <strong>${wt.mat}</strong> ya debería sonar familiar. Hoy repasa lo más difícil.`, sub:"60 min", dot:"green"},
-      {time:"10:10", icon:"⏸", title:"Descanso",                  desc:"10 minutos.", sub:"10 min", dot:""},
-      {time:"10:20", icon:"🔁", title:"Flash repaso",             desc:"Sin mirar el temario: escribe de memoria todos los puntos clave. Luego compara.", sub:"25 min", dot:"green"},
-      {time:"10:45", icon:"📝", title:"Test del tema",            desc:"Tests → Test del día. Cuando corrijas, lee por qué es correcta la respuesta correcta.", sub:"30 min", dot:"blue"},
-      {time:"11:15", icon:"✅", title:"Marca el día",             desc:"Cuatro de cuatro. Rubia.", sub:"", dot:"gold"},
+      {time:"9:00",  title:"Ritual de inicio",        desc:"El de siempre.", sub:"10 min", dot:"gold"},
+      {time:"9:10",  title:"Bloque de teoría — Parte 1", desc:`<strong>#{TITULO}</strong> — #{LEY}. Ya debería sonar familiar. Hoy repasa lo más difícil.`, sub:"70 min", dot:"green"},
+      {time:"10:20", title:"Descanso",                desc:"20 minutos.", sub:"20 min", dot:"rest"},
+      {time:"10:40", title:"Bloque de teoría — Parte 2", desc:"Tercer bloque. Consolida lo del día.", sub:"10 min", dot:"green"},
+      {time:"10:50", title:"Test del día",             desc:"Tests → Test del día. Cuando corrijas, lee por qué es correcta la respuesta.", sub:"35 min", dot:"blue"},
+      {time:"11:25", title:"Descanso",                desc:"20 minutos.", sub:"20 min", dot:"rest"},
+      {time:"11:45", title:"Bloque de teoría — Parte 3", desc:"Tercer bloque. Lo que falló en el test: dale una lectura.", sub:"30 min", dot:"green"},
+      {time:"12:15", title:"Hora del examen",         desc:"30 preguntas mixtas de todo el temario hasta hoy. Sin mirar nada. Cronometrada.", sub:"30 min", dot:"blue"},
+      {time:"12:45", title:"Marca el día",             desc:"Cuatro de cuatro. Rubia.", sub:"", dot:"gold"},
     ],
-    total: "~2h 15min"
+    total: "~3h 45min"
   },
-  5: { // Viernes
+  5: { // Viernes — hasta las 14:00
     blocks: [
-      {time:"9:00",  icon:"☕", title:"Ritual de inicio",         desc:"Último día de la semana. El más importante.", sub:"10 min", dot:"gold"},
-      {time:"9:10",  icon:"📖", title:"Repaso de toda la semana", desc:`30 min repasando <strong>${wt.mat}</strong> de principio a fin. Rápido, esquema, puntos clave.`, sub:"30 min", dot:"green"},
-      {time:"9:40",  icon:"📋", title:"Test semanal",            desc:"Tests → Test semanal. Mezcla de todo lo de la semana. Cronométrate.", sub:"40 min", dot:"blue"},
-      {time:"10:20", icon:"⏸", title:"Descanso",                  desc:"10 minutos. Te lo mereces.", sub:"10 min", dot:""},
-      {time:"10:30", icon:"📋", title:"Revisión de fallos",      desc:"Apunta los temas donde has fallado esta semana. Solo anótalos. El lunes empiezas por ahí.", sub:"15 min", dot:"gold"},
-      {time:"10:45", icon:"✅", title:"Semana cerrada",          desc:"Cinco días. La semana es tuya. El resto del día: tuyo también, sin culpa.", sub:"", dot:"gold"},
+      {time:"9:00",  title:"Ritual de inicio",        desc:"Último día de la semana.", sub:"10 min", dot:"gold"},
+      {time:"9:10",  title:"Bloque de teoría — Parte 1", desc:"<strong>#{TITULO}</strong> — #{LEY}.", sub:"60 min", dot:"green"},
+      {time:"10:10", title:"Descanso",                desc:"20 minutos.", sub:"20 min", dot:"rest"},
+      {time:"10:30", title:"Bloque de teoría — Parte 2", desc:"Continúa donde lo dejaste.", sub:"40 min", dot:"green"},
+      {time:"11:10", title:"Test semanal",             desc:"Tests → Test semanal. Mezcla de todo lo de la semana. Cronométrate.", sub:"40 min", dot:"blue"},
+      {time:"11:50", title:"Hora del examen",          desc:"30 preguntas mixtas de todo el temario. Sin apuntes, cronometrada.", sub:"30 min", dot:"blue"},
+      {time:"12:20", title:"Marca el día",             desc:"Ve a Mi Plan y márcalo. La semana es tuya.", sub:"", dot:"gold"},
     ],
-    total: "~1h 45min"
+    total: "~3h 40min"
   },
 };
 
@@ -197,69 +213,42 @@ if (today < planStart) {
       <div class="daily-header-ley">${previewMap.ley}</div>
     </div>
     <div class="daily-blocks">
-      ${previewSched.blocks.map(b => `
+      ${previewSched.blocks.map(b => {
+        const desc = b.desc.replace('#{TITULO}', previewMap.titulo).replace('#{LEY}', previewMap.ley);
+        return `
         <div class="daily-block">
           <div class="db-bar ${b.dot}"></div>
           <div class="db-content">
             <div class="db-time-inline">${b.time}</div>
             <div class="db-body">
               <div class="db-title">${b.title}</div>
-              <div class="db-desc">${b.desc}</div>
+              <div class="db-desc">${desc}</div>
               ${b.sub ? `<div class="db-sub">${b.sub}</div>` : ''}
             </div>
           </div>
-        </div>`).join('')}
+        </div>`;
+      }).join('')}
     </div>
     <div class="daily-footer">
       <span>Terminas antes de mediodía 🌿</span>
       <span class="df-total">${previewSched.total}</span>
     </div>`;
 
-  const previewWeekEl = document.createElement('div');
-  previewWeekEl.className = 'week-preview-card';
-  const studyDayNum = 0;
-  const todayMapEntry = previewMap;
-  const wt = previewWt;
-  previewWeekEl.innerHTML = `
-    <div class="wp-header">
-      <div class="wp-eyebrow">Esta semana</div>
-      <div class="wp-title">${previewWt.mat}</div>
-    </div>
-    <div class="wp-days-wrap">
-      <div class="wp-days">
-        ${previewDayLabels.map((d, i) => `
-          <div class="wp-day ${i===0?'wp-today':''}">
-            <div class="wp-day-name">${d}</div>
-            <div class="wp-day-topic">${previewWeekMap[i].titulo.split(' — ')[0]}</div>
-            <div class="wp-day-ley">${previewWeekMap[i].ley}</div>
-          </div>`).join('')}
-      </div>
-      <div class="wp-prep">
-        <div class="wp-prep-label">📂 Prepara tus apuntes antes del lunes</div>
-        <div class="wp-prep-col">
-          <div class="wp-prep-col-title">Leyes</div>
-          ${previewLaws.map(l => `<div class="wp-prep-item">${l}</div>`).join('')}
-        </div>
-        <div class="wp-prep-col">
-          <div class="wp-prep-col-title">Temas</div>
-          ${previewTopics.map(t => `<div class="wp-prep-item">${t}</div>`).join('')}
-        </div>
-      </div>
-    </div>`;
-
   dailyEl.appendChild(previewDc);
-  dailyEl.appendChild(previewWeekEl);
 } else if (isWeekend) {
   const findeMsg = dow === 6 ? [
     { title: "Sábado.", sub: "El temario no te echa de menos. Tómatelo con calma." },
-    { title: "Hoy no.", sub: "El cerebro también necesita apagar el wifi. Tú puedes." },
+    { title: "Hoy no.", sub: "El cerebro también necesita apagar el wifi. Y la Spycam." },
     { title: "Para. Respira.", sub: "Mañana es domingo y pasado vuelves. Hoy no existe el BOE." },
-    { title: "Sábado sagrado.", sub: "Ni un artículo. Ni uno. En serio." },
+    { title: "Sábado sagrado.", sub: "Ni un artículo. Ni uno. Si hay partido del Atleti, mejor plan imposible." },
+    { title: "Neural Theft desactivado.", sub: "Hoy no procesas info. Hoy descansas. Órdenes de Cypher. 🕵️" },
+    { title: "Día libre.", sub: "Si el Madrid perdió esta semana: karma confirmado. Si ganó: el examen lo compensa. 😈" },
   ] : [
     { title: "Domingo, Rubia.", sub: "Descansa. Mañana arrancas de nuevo y lo vas a petar." },
     { title: "El plan puede esperar.", sub: "Tú no. Disfruta el día. El temario sigue ahí mañana." },
-    { title: "Cero temario hoy.", sub: "Ni lo pienses. El descanso es parte del entrenamiento." },
-    { title: "Domingo means freedom.", sub: "La Constitución puede esperar hasta el lunes. Prometido." },
+    { title: "Cero temario hoy.", sub: "Ni lo pienses. El descanso es parte del entrenamiento. Como el descanso entre trampas de Cypher." },
+    { title: "Domingo means freedom.", sub: "La Constitución puede esperar hasta el lunes. El Atleti no. Si hay partido, prioritario. 🔴⚪" },
+    { title: "Ningún secreto está a salvo.", sub: "Excepto el tuyo: que hoy no estudias y está perfectamente bien. — Cypher 🕵️" },
   ];
   const msg = findeMsg[dayOfYear % findeMsg.length];
   dailyEl.innerHTML = `
@@ -284,18 +273,21 @@ if (today < planStart) {
       <div class="daily-header-ley">${dayLey}</div>
     </div>
     <div class="daily-blocks">
-      ${sched.blocks.map(b => `
+      ${sched.blocks.map(b => {
+        const desc = b.desc.replace('#{TITULO}', dayTitle).replace('#{LEY}', dayLey);
+        return `
         <div class="daily-block">
-          <div class="db-bar ${b.dot}"></div>
-          <div class="db-content">
+          <div class="db-bar ${b.dot || 'rest'}"></div>
+          <div class="db-content${b.dot === 'rest' ? ' is-rest' : ''}">
             <div class="db-time-inline">${b.time}</div>
             <div class="db-body">
               <div class="db-title">${b.title}</div>
-              <div class="db-desc">${b.desc}</div>
+              <div class="db-desc">${desc}</div>
               ${b.sub ? `<div class="db-sub">${b.sub}</div>` : ''}
             </div>
           </div>
-        </div>`).join('')}
+        </div>`;
+      }).join('')}
     </div>
     <div class="daily-footer">
       <span>Terminas antes de mediodía 🌿</span>
@@ -303,47 +295,7 @@ if (today < planStart) {
     </div>`;
   dailyEl.appendChild(dc);
 
-  // ── VISTA SEMANAL (después del plan diario) ──
-  const weekEl = document.createElement('div');
-  weekEl.className = 'week-preview-card';
-  const weekDays = ['L','M','X','J','V'];
-  const dayLabels = ['Lunes','Martes','Miércoles','Jueves','Viernes'];
-  const weekMapData = DAILY_MAP[tomorrowWeek] || [];
-  // Build unique laws needed this week for prep panel
-  const weekLaws = [...new Set(weekMapData.filter(Boolean).map(e => e.ley))];
-  const weekTopics = weekMapData.filter(Boolean).map(e => e.titulo.split(' — ')[0]);
 
-  weekEl.innerHTML = `
-    <div class="wp-header">
-      <div class="wp-eyebrow">Esta semana</div>
-      <div class="wp-title">${wt.mat}</div>
-    </div>
-    <div class="wp-days-wrap">
-      <div class="wp-days">
-        ${weekDays.map((d, i) => {
-          const entry = weekMapData[i];
-          const isToday = (d === WD[dow]);
-          if (!entry) return '';
-          return `<div class="wp-day ${isToday ? 'wp-today' : ''}">
-            <div class="wp-day-name">${dayLabels[i]}</div>
-            <div class="wp-day-topic">${entry.titulo.split(' — ')[0]}</div>
-            <div class="wp-day-ley">${entry.ley}</div>
-          </div>`;
-        }).join('')}
-      </div>
-      <div class="wp-prep">
-        <div class="wp-prep-label">📂 ${dow === 5 || dow === 0 ? "Prepara tus apuntes antes del lunes" : "Lo que necesitas esta semana"}</div>
-        <div class="wp-prep-col">
-          <div class="wp-prep-col-title">Leyes que necesitas</div>
-          ${weekLaws.map(l => `<div class="wp-prep-item">${l}</div>`).join('')}
-        </div>
-        <div class="wp-prep-col">
-          <div class="wp-prep-col-title">Temas de la semana</div>
-          ${weekTopics.map(t => `<div class="wp-prep-item">${t}</div>`).join('')}
-        </div>
-      </div>
-    </div>`;
-  dailyEl.appendChild(weekEl);
 }
 
 // ── TESTS ──
@@ -697,8 +649,46 @@ function buildTest(questions, containerId, label) {
   render();
 }
 
-buildTest(dailyQs, 'test-daily', `Test del día · ${temaDelDia}`);
-buildTest(weekQs,  'test-week',  'Test semanal · Repaso completo');
+// ── BLOQUEO POR HORA ──
+// Horas de desbloqueo según horario real (L=1,M=2,X=3,J=4,V=5)
+const TEST_UNLOCK_HOURS = { 1: 11*60+50, 2: 10*60+50, 3: 11*60+15, 4: 10*60+50, 5: 9*60+40 };
+const nowMinutes = today.getHours() * 60 + today.getMinutes();
+const unlockMinutes = TEST_UNLOCK_HOURS[dow] || 11*60;
+const testDailyUnlocked = planStarted && !isWeekend && nowMinutes >= unlockMinutes;
+const testWeeklyUnlocked = dow === 5 && nowMinutes >= 9*60+40; // Solo viernes a las 9:40
+
+function buildLockedTest(containerId, title, reason) {
+  const c = document.getElementById(containerId);
+  if (!c) return;
+  c.innerHTML = `
+    <div class="test-container">
+      <div class="test-locked-msg">
+        <div class="test-locked-icon">🔒</div>
+        <div class="test-locked-title">${title}</div>
+        <div class="test-locked-sub">${reason}</div>
+      </div>
+    </div>`;
+}
+
+if (testDailyUnlocked) {
+  buildTest(dailyQs, 'test-daily', `Test del día · ${temaDelDia}`);
+} else if (planStarted && !isWeekend) {
+  const h = Math.floor(unlockMinutes / 60);
+  const m = String(unlockMinutes % 60).padStart(2,'0');
+  buildLockedTest('test-daily', 'Test del día', `Disponible a las ${h}:${m}. Termina la teoría primero, Rubia.`);
+} else {
+  buildTest(dailyQs, 'test-daily', `Test del día · ${temaDelDia}`);
+}
+
+if (testWeeklyUnlocked) {
+  buildTest(weekQs, 'test-week', 'Test semanal · Repaso completo');
+} else if (dow === 5) {
+  buildLockedTest('test-week', 'Test semanal', 'Disponible a las 9:40. Primero el repaso de la semana.');
+} else {
+  const diasParaViernes = (5 - dow + 7) % 7 || 7;
+  const pluralDias = diasParaViernes === 1 ? 'día' : 'días';
+  buildLockedTest('test-week', 'Test semanal', `Solo los viernes. Quedan ${diasParaViernes} ${pluralDias}.`);
+}
 
 function switchTest(type, btn) {
   document.querySelectorAll('.wtab').forEach(b => b.classList.remove('active'));
@@ -715,7 +705,16 @@ function switchTest(type, btn) {
   }
 }
 
-// Inicializar panel de repaso
+// Inicializar — todos los paneles de test ocultos excepto el activo
+['test-daily','test-week','test-sabado','repaso-list','test-repaso-container'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) el.style.display = 'none';
+});
+// Mostrar test del día por defecto
+const defaultPanel = document.getElementById('test-daily');
+if (defaultPanel) defaultPanel.style.display = 'block';
+
+// Inicializar repaso en segundo plano sin mostrarlo
 renderRepaso();
 
 // ── MAPA CONCEPTUAL SEMANAL ──
@@ -1123,42 +1122,68 @@ PLAN_DATA.forEach(month => {
 
     const wr = document.createElement('div');
     wr.className = 'week-row';
+    const dayLabelsShort = ['L','M','X','J','V'];
+    const dayLabelsLong = ['Lunes','Martes','Miércoles','Jueves','Viernes'];
+    const weekDayDetails = globalWeekIdx < DAILY_MAP.length
+      ? DAILY_MAP[globalWeekIdx].map((d, di) => `
+          <div class="week-day-detail">
+            <span class="week-day-letter">${dayLabelsShort[di]}</span>
+            <span class="week-day-topic">${d.titulo}</span>
+            <span class="week-day-ley">${d.ley}</span>
+          </div>`).join('')
+      : '';
+
+    const weekMapForPrep = DAILY_MAP[globalWeekIdx] || [];
+    const prepLaws = [...new Set(weekMapForPrep.map(d => d.ley))];
+    const prepLawsHtml = prepLaws.map(l => `<div class="week-prep-item">${l}</div>`).join('');
+
     wr.innerHTML = `
       <div class="week-label">${week.n}</div>
       <div class="week-topic">${week.t}</div>
-      <div class="days-grid" id="dg-${month.id}-${wi}"></div>`;
+      <div class="week-day-blocks" id="dg-${month.id}-${wi}"></div>
+      <div class="week-prep-strip">
+        <div class="week-prep-strip-label">📂 Prepara estos apuntes</div>
+        ${prepLawsHtml}
+      </div>`;
     body.appendChild(wr);
 
     const grid = wr.querySelector(`#dg-${month.id}-${wi}`);
-    DAY_NAMES.forEach((d, di) => {
-      const key  = `${month.id}-${wi}-${di}`;
-      const cell = document.createElement('div');
+    const studyDays = ['L','M','X','J','V'];
+    studyDays.forEach((d, studyDayIdx) => {
+      const di = ['L','M','X','J','V','S','D'].indexOf(d);
+      const key = `${month.id}-${wi}-${di}`;
       const isDone = doneDays[key];
-      const isRest = (d === 'S' || d === 'D');
+      const dailyInfo = DAILY_MAP[globalWeekIdx] ? DAILY_MAP[globalWeekIdx][studyDayIdx] : null;
+      if (!dailyInfo) return;
 
-      // Get daily topic from DAILY_MAP (only L-V = di 0-4)
-      const studyDayIdx = ['L','M','X','J','V'].indexOf(d);
-      const dailyInfo = (studyDayIdx >= 0 && DAILY_MAP[globalWeekIdx])
-        ? DAILY_MAP[globalWeekIdx][studyDayIdx] : null;
+      const dayNames = ['Lunes','Martes','Miércoles','Jueves','Viernes'];
+      const block = document.createElement('div');
+      block.className = 'day-block' + (isDone ? ' done' : '');
+      block.dataset.key = key;
+      block.dataset.weekIdx = globalWeekIdx;
+      block.dataset.dayIdx = studyDayIdx;
+      block.dataset.dayLetter = d;
+      block.innerHTML = `
+        <div class="day-block-left">
+          <div class="day-block-letter">${d}</div>
+          <div class="day-block-dayname">${dayNames[studyDayIdx]}</div>
+        </div>
+        <div class="day-block-body">
+          <div class="day-block-titulo">${dailyInfo.titulo}</div>
+          <div class="day-block-ley">${dailyInfo.ley}</div>
+        </div>
+        <div class="day-block-check">✓</div>`;
 
-      cell.className = 'day-cell' + (isDone ? ' done' : '') + (isRest ? ' rest' : '') + (dailyInfo ? ' has-topic' : '');
-      cell.innerHTML = `<span class="dc-n">${di + 1}</span><span class="dc-d">${d}</span><span class="dc-chk">✓</span>`;
-      cell.dataset.weekIdx = globalWeekIdx;
-      cell.dataset.dayIdx = studyDayIdx;
-      cell.dataset.key = key;
+      block.onclick = () => {
+        if (doneDays[key]) {
+          showDayDetail(block, dailyInfo, true, d, globalWeekIdx);
+        } else {
+          toggleDay(block, key);
+          block.classList.add('done');
+        }
+      };
 
-      if (!isRest) {
-        cell.onclick = () => {
-          if (doneDays[key] && dailyInfo) {
-            // Already done — show topic detail
-            showDayDetail(cell, dailyInfo, true, d, globalWeekIdx);
-          } else if (!doneDays[key]) {
-            // Not done — mark as done
-            toggleDay(cell, key);
-          }
-        };
-      }
-      grid.appendChild(cell);
+      grid.appendChild(block);
     });
   });
 });
@@ -1200,7 +1225,7 @@ function showDayDetail(cell, info, isDone, dayName, weekIdx) {
       <!-- CTAs -->
       <div class="ddp-btns">
         <button class="ddp-btn ddp-btn-secondary" id="ddp-pdf-btn">
-          Descargar apuntes
+          Ver apuntes
         </button>
         ${isDone ? `
         <button class="ddp-btn" onclick="
@@ -1247,16 +1272,53 @@ function showDayDetail(cell, info, isDone, dayName, weekIdx) {
   }), 120);
 }
 
+function showToast(msg) {
+  const existing = document.getElementById('vania-toast');
+  if (existing) existing.remove();
+  const t = document.createElement('div');
+  t.id = 'vania-toast';
+  t.textContent = msg;
+  t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a2e1a;color:#ede4cc;padding:10px 22px;border-radius:100px;font-family:"DM Sans",sans-serif;font-size:13px;font-weight:500;z-index:999;box-shadow:0 4px 20px rgba(0,0,0,.25);animation:fadeUp .3s ease;letter-spacing:.3px;white-space:nowrap;';
+  document.body.appendChild(t);
+  setTimeout(() => t.style.opacity = '0', 2200);
+  setTimeout(() => t.remove(), 2600);
+}
+
 function toggleM(head) {
   const id = head.closest('.month-block').querySelector('[id^="mb-"]').id.split('-')[1];
   head.querySelector('.m-chev').classList.toggle('open');
   document.getElementById(`mb-${id}`).classList.toggle('open');
 }
 
+const DONE_MSGS = [
+  "Otro día en el saco. Que no se te olvide que esto se gana así, uno a uno.",
+  "Marcado. Ahora no lo borres porque 'total tampoco estudié mucho'. Sí estudiaste.",
+  "Un día más. El examen no sabe que hoy no te apetecía. Pero tú apareciste igual.",
+  "Lo tienes. Ahora no empieces a pensar en lo que te queda. Hoy está hecho.",
+  "Día cerrado. Sin drama, sin medalla. Mañana más.",
+  "Ningún secreto está a salvo. Ningún movimiento pasa desapercibido. — Cypher. Y tú tampoco te escapas del temario.",
+  "Marcado. El Atleti ha ganado partidos con peor inicio que tu mañana. Sigue.",
+  "Eso es. Sin esperar aplausos. Así es como funciona esto.",
+  "Día hecho. Cypher no falla en la info. Tú tampoco en el plan. 🕵️",
+  "Suma y sigue, Rubia.",
+  "Marcado. Y si el Madrid ganó anoche, que te dé fuerzas para hundir el examen. 😈",
+];
 function toggleDay(cell, key) {
+  const wasDone = doneDays[key];
   doneDays[key] = !doneDays[key];
   try { localStorage.setItem('vania_days', JSON.stringify(doneDays)); } catch(e) {}
-  cell.classList.toggle('done', doneDays[key]);
+  // Update block visual
+  const blockEl = document.querySelector(`[data-key="${key}"]`);
+  if (blockEl) blockEl.classList.toggle('done', doneDays[key]);
+  if (doneDays[key] && !wasDone) {
+    // Show brief message
+    const msg = DONE_MSGS[dayOfYear % DONE_MSGS.length];
+    const toast = document.createElement('div');
+    toast.style.cssText = 'position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:#1c3d1f;color:#e8f0e8;font-family:Lora,serif;font-style:italic;font-size:13px;padding:14px 24px;border-radius:100px;z-index:9999;max-width:360px;text-align:center;line-height:1.6;box-shadow:0 8px 32px rgba(0,0,0,.2);animation:fadeUp .3s ease;';
+    toast.textContent = msg;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 4000);
+  }
   updateStats();
 }
 
@@ -1348,10 +1410,7 @@ function resetP() {
 }
 
 // ── RECOMPENSAS ──
-let selectedRewards = [];
-try { selectedRewards = JSON.parse(localStorage.getItem('vania_rewards') || '[]'); } catch(e) {}
 
-// Recompensa desbloqueada si completó al menos 1 pomodoro HOY
 function rewardUnlocked() {
   try {
     const pomoDates = JSON.parse(localStorage.getItem('vania_pomo_dates') || '[]');
@@ -1365,55 +1424,46 @@ function renderRewardCard() {
   if (!card) return;
 
   const unlocked = rewardUnlocked();
+  const testDoneToday = (() => {
+    try {
+      const scores = JSON.parse(localStorage.getItem('vania_scores') || '{}');
+      const todayStr = today.toISOString().slice(0,10);
+      return Object.values(scores).some(s => s.date === todayStr);
+    } catch(e) { return false; }
+  })();
+  const fullyUnlocked = unlocked && testDoneToday;
 
-  if (selectedRewards.length > 0) {
-    const list = selectedRewards.map(i => ALL_REWARDS[i]);
-    card.innerHTML = `
-      <div style="font-size:10px;text-transform:uppercase;letter-spacing:3px;color:var(--sage);font-weight:600;margin-bottom:12px">
-        Cuando acabes, te lo has ganado
-      </div>
-      <p style="font-size:13px;color:var(--ink2);margin-bottom:18px;line-height:1.7">
-        ${unlocked
-          ? '✓ Has completado el Pomodoro de hoy. <strong style="color:var(--green)">Las recompensas están desbloqueadas.</strong>'
-          : 'Completa un Pomodoro hoy para desbloquearlas. Aún no te las has ganado, Rubia.'}
-      </p>
-      ${list.map(r => `
-        <div class="reward-saved ${unlocked ? 'unlocked' : 'locked'}">
-          <div class="reward-saved-icon" data-cat="${r.cat}">${r.icon}</div>
-          <div class="reward-saved-body">
-            <div class="reward-saved-name">${r.name}</div>
-            <div class="reward-saved-sub">${r.sub}</div>
-            ${unlocked
-              ? '<div class="reward-unlock-badge">✓ Desbloqueada</div>'
-              : '<div class="reward-saved-lock">🔒 Completa un Pomodoro primero</div>'}
-          </div>
-        </div>`).join('')}
-      <button class="reward-change-btn" onclick="resetRewards()">Cambiar mis recompensas</button>`;
-  } else {
-    card.innerHTML = `
-      <div style="font-size:10px;text-transform:uppercase;letter-spacing:3px;color:var(--sage);font-weight:600;margin-bottom:12px">
-        Elige tus recompensas
-      </div>
-      <p class="reward-picker-intro">
-        <strong>¿Qué te apetece cuando termines el Pomodoro de hoy?</strong><br>
-        Elige 2 o 3. Se desbloquean automáticamente cuando completes al menos un Pomodoro. Sin trampa.
-      </p>
-      <div class="reward-options">
-        ${ALL_REWARDS.map((r, i) => `
-          <div class="reward-opt" id="ropt-${i}" data-cat="${r.cat}" onclick="toggleRewardOpt(${i})">
-            <span class="reward-opt-icon">${r.icon}</span>
-            <span class="reward-opt-txt">${r.name}</span>
-          </div>`).join('')}
-      </div>
-      <button class="reward-save-btn" onclick="saveRewards()">Guardar mis recompensas →</button>`;
-  }
-}
+  // Los párrafos de Sarah — incluyen sugerencias de qué hacer
+  const SARAH_PARAGRAPHS = [
+    "Rubia. Lo has hecho. Y no me digas que ha sido fácil. Hoy te metes al Valorant sin culpa. Pon a Cypher, que informacion es poder — y tú hoy tienes toda la información del temario. 🕵️🌿",
+    "Otro día. Otro tick. ¿Ves cómo puedes? Venga, llama a una amiga y salid a tomar algo. Sin pensar en el temario, sin culpa. El temario puede esperar hasta mañana. 🌿",
+    "Sin excusas, sin dramas. Solo tú y el temario, y ganaste tú. Como el Atleti cuando nadie les da por favoritos — y ganan igual. Ahora descansa. 🔴⚪",
+    "Otro día que no te puedes poner la excusa de 'hoy no estudié'. Porque hoy sí. Ahora comer lo que te apetezca, sin calcular nada. Disfruta. 🌿",
+    "Te dije que podías. Hoy la razón es mía, como casi siempre. Descansa de verdad. El cerebro lo necesita igual que el Atleti necesita la defensa. Sin descanso no hay partido. 🌿",
+    "No te voy a decir que es fácil porque no lo es. Pero tú lo haces igual. Pon la música a tope y no pienses en nada más. Ni en el Madrid. Sobre todo no en el Madrid. 😈🌿",
+    "¿Ves lo que pasa cuando no te rindes? Exactamente esto. Como dice Cypher: 'Nadie pasa sin que yo lo sepa.' Hoy nadie te paró. Disfruta la tarde. 🕵️🌿",
+    "Bien hecho, Rubia. En serio. Ahora apaga el modo estudio y haz lo que te apetezca. Si hay partido del Atleti esta noche: merecidísimo. Si es el Madrid: tampoco lo veas, que te va a arruinar el buen rollo. 😂🌿",
+  ];
 
-function toggleRewardOpt(i) {
-  const el  = document.getElementById(`ropt-${i}`);
-  const idx = selectedRewards.indexOf(i);
-  if (idx > -1) { selectedRewards.splice(idx, 1); el.classList.remove('selected'); }
-  else if (selectedRewards.length < 3) { selectedRewards.push(i); el.classList.add('selected'); }
+  const msg = SARAH_PARAGRAPHS[dayOfYear % SARAH_PARAGRAPHS.length];
+
+  card.innerHTML = fullyUnlocked ? `
+    <div class="reward-para-card">
+      <div class="reward-para-label">Un momento, antes de irte</div>
+      <div class="reward-para-text">${msg}</div>
+      <div class="reward-para-sign">— Sarah</div>
+    </div>` : `
+    <div class="reward-locked-card">
+      <div class="reward-locked-icon">🔒</div>
+      <div class="reward-locked-title">Todavía no, Rubia.</div>
+      <div class="reward-locked-msg">
+        ${!unlocked && !testDoneToday
+          ? 'Completa el Pomodoro y el test del día. Los dos. Sin atajos.'
+          : !unlocked
+            ? 'Falta el Pomodoro. No es opcional.'
+            : 'Falta el test del día. Casi, pero no.'}
+      </div>
+    </div>`;
 }
 
 function saveRewards() {
