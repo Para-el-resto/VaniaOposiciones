@@ -301,7 +301,29 @@ if (today < planStart) {
 }
 
 // ── TESTS ──
-const temaDelDia = TEMAS_TEST[Math.floor(dayIndex / 5) % TEMAS_TEST.length];
+// Mapear el título del día actual al tema de preguntas correspondiente
+function getTemaFromTitulo(titulo) {
+  if (!titulo) return null;
+  const t = titulo.toLowerCase();
+  if (t.includes('ce —') || t.includes('constitución') || t.startsWith('ce ')) return 'Constitución';
+  if (t.includes('código penal') || t.startsWith('cp —')) return 'Código Penal';
+  if (t.includes('lo 4/15')) return 'LO 4/15 — Seg. Ciudadana';
+  if (t.includes('lo 2/86')) return 'LO 2/86 — Modelo Policial';
+  if (t.includes('tráfico') || t.includes('rgc') || t.includes('lsv') || t.includes('alcoholemia') || t.includes('infracciones de tráfico')) return 'Tráfico y Circulación';
+  if (t.includes('taxi')) return 'Ordenanza Taxi';
+  if (t.includes('oms') || t.includes('movilidad sostenible')) return 'Ordenanza Movilidad';
+  if (t.includes('decreto 210') || t.includes('reglamento marco') || t.includes('reglamento cuerpo pm') || t.includes('régimen disciplinario')) return 'Reglamento PM y Marco';
+  if (t.includes('lo 4/00') || t.includes('extranjería')) return 'Derechos Extranjeros';
+  if (t.includes('violencia de género') || t.includes('lo 1/04') || t.includes('ley 27/03')) return 'Violencia de Género';
+  if (t.includes('igualdad') || t.includes('lo 3/07') || t.includes('lgtbi')) return 'Igualdad';
+  if (t.includes('prl') || t.includes('ley 31/95') || t.includes('prevención')) return 'PRL';
+  if (t.includes('capitalidad') || t.includes('distritos') || t.includes('lbrl') || t.includes('ley 7/85') || t.includes('ley 22/2006') || t.includes('estatuto autonomía')) return 'Admin. Local y Madrid';
+  // Para días sin preguntas específicas (repaso, simulacro, etc.) usar Constitución como fallback
+  return 'Constitución';
+}
+const studyDayNum4Test = dow >= 1 && dow <= 5 ? dow - 1 : -1;
+const todayMapEntry4Test = studyDayNum4Test >= 0 && DAILY_MAP[todayWeek] ? DAILY_MAP[todayWeek][studyDayNum4Test] : null;
+const temaDelDia = getTemaFromTitulo(todayMapEntry4Test?.titulo) || 'Constitución';
 const dailyQs = ALL_QUESTIONS.filter(q => q.tema === temaDelDia);
 const weekQs  = [...ALL_QUESTIONS].sort(() => Math.random() - .5).slice(0, 8);
 
