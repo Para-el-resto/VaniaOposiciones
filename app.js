@@ -119,6 +119,8 @@ function getStudyDay(date) {
 
 const tomorrowStudyDay = getStudyDay(tomorrow);
 const tomorrowWeek     = Math.floor(tomorrowStudyDay / 5);
+const todayStudyDay    = getStudyDay(today);
+const todayWeek        = Math.floor(todayStudyDay / 5);
 const wt = WEEK_THEMES[Math.min(tomorrowWeek, WEEK_THEMES.length - 1)];
 
 const DAY_SCHEDULES = {
@@ -260,8 +262,8 @@ if (today < planStart) {
   const sched = DAY_SCHEDULES[dow] || DAY_SCHEDULES[1];
   const dc = document.createElement('div');
   // Get today's specific topic from DAILY_MAP (not the week theme)
-  const studyDayNum = ['L','M','X','J','V'].indexOf(WD[dow]);
-  const todayMapEntry = (studyDayNum >= 0 && DAILY_MAP[tomorrowWeek]) ? DAILY_MAP[tomorrowWeek][studyDayNum] : null;
+  const studyDayNum = dow >= 1 && dow <= 5 ? dow - 1 : -1; // L=0, M=1, X=2, J=3, V=4
+  const todayMapEntry = (studyDayNum >= 0 && DAILY_MAP[todayWeek]) ? DAILY_MAP[todayWeek][studyDayNum] : null;
   const dayTitle = todayMapEntry ? todayMapEntry.titulo : wt.mat;
   const dayLey = todayMapEntry ? todayMapEntry.ley : wt.sub;
 
@@ -654,8 +656,8 @@ function buildTest(questions, containerId, label) {
 const TEST_UNLOCK_HOURS = { 1: 11*60+50, 2: 10*60+50, 3: 11*60+15, 4: 10*60+50, 5: 9*60+40 };
 const nowMinutes = today.getHours() * 60 + today.getMinutes();
 const unlockMinutes = TEST_UNLOCK_HOURS[dow] || 11*60;
-const testDailyUnlocked = planStarted && !isWeekend && nowMinutes >= unlockMinutes;
-const testWeeklyUnlocked = dow === 5 && nowMinutes >= 9*60+40; // Solo viernes a las 9:40
+const testDailyUnlocked = planStarted && !isWeekend;
+const testWeeklyUnlocked = dow === 5; // Solo viernes
 
 function buildLockedTest(containerId, title, reason) {
   const c = document.getElementById(containerId);
