@@ -1366,10 +1366,12 @@ function updateStats() {
     if (doneDays[allKeys[i]]) r++;
     else break;
   }
-  document.getElementById('pRacha').textContent      = r;
+  // +9 días que llevaba antes de que arrancara el plan digital
+  const RACHA_OFFSET = 9;
+  document.getElementById('pRacha').textContent      = r + RACHA_OFFSET;
   // Update new hero racha display
   const rachaNumEl = document.getElementById('rachaBadgeNum');
-  if (rachaNumEl) rachaNumEl.textContent = r;
+  if (rachaNumEl) rachaNumEl.textContent = r + RACHA_OFFSET;
 }
 
 updateStats();
