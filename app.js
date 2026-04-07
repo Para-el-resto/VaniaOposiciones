@@ -1536,7 +1536,12 @@ function showRewardPopup() {
   const popup = document.getElementById('rewardPopup');
   const box = document.getElementById('rewardPopupBox');
   if (!popup || !box) return;
-  const msg = SARAH_PARAGRAPHS[dayOfYear % SARAH_PARAGRAPHS.length];
+  // Contador que sube cada vez que marca un día
+  let msgIdx = 0;
+  try { msgIdx = parseInt(localStorage.getItem('vania_msg_idx') || '0'); } catch(e) {}
+  msgIdx = (msgIdx + 1) % SARAH_PARAGRAPHS.length;
+  try { localStorage.setItem('vania_msg_idx', msgIdx); } catch(e) {}
+  const msg = SARAH_PARAGRAPHS[msgIdx];
   box.innerHTML = `
     <div class="reward-popup-header">
       <span class="reward-popup-label">Un momento, antes de irte</span>
