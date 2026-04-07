@@ -1328,6 +1328,16 @@ const DONE_MSGS = [
   "Marcado. Y si el Madrid ganó anoche, que te dé fuerzas para hundir el examen. 😈",
 ];
 function toggleDay(cell, key) {
+  // Bloquear hasta que termine la hora de estudio
+  const MARK_UNLOCK = { 1: 13*60, 2: 12*60+45, 3: 12*60+45, 4: 12*60+45, 5: 12*60+20 };
+  const unlockMin = MARK_UNLOCK[dow];
+  const nowMin = new Date().getHours() * 60 + new Date().getMinutes();
+  if (unlockMin && nowMin < unlockMin) {
+    const h = Math.floor(unlockMin / 60);
+    const m = String(unlockMin % 60).padStart(2, '0');
+    showToast(`Todavía no, Rubia. Puedes marcarlo a las ${h}:${m} ⏳`);
+    return;
+  }
   const wasDone = doneDays[key];
   doneDays[key] = !doneDays[key];
   try { localStorage.setItem('vania_days', JSON.stringify(doneDays)); } catch(e) {}
