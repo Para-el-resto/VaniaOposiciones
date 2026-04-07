@@ -1203,7 +1203,7 @@ PLAN_DATA.forEach(month => {
           showDayDetail(block, dailyInfo, true, d, globalWeekIdx);
         } else {
           toggleDay(block, key);
-          block.classList.add('done');
+          // La clase 'done' la gestiona toggleDay internamente
         }
       };
 
