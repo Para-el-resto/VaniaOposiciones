@@ -1328,6 +1328,18 @@ const DONE_MSGS = [
   "Marcado. Y si el Madrid ganó anoche, que te dé fuerzas para hundir el examen. 😈",
 ];
 function toggleDay(cell, key) {
+  // Bloquear días futuros — calcular la fecha real del bloque
+  const weekIdx = parseInt(cell.dataset.weekIdx || 0);
+  const dayIdx = parseInt(cell.dataset.dayIdx || 0); // 0=L,1=M,2=X,3=J,4=V
+  // planStart ya es lunes 23 marzo — weekIdx semanas después + dayIdx días
+  const blockDate = new Date(planStart);
+  blockDate.setDate(blockDate.getDate() + (weekIdx * 7) + dayIdx);
+  blockDate.setHours(0,0,0,0);
+
+  if (blockDate > today) {
+    showToast('Ese día aún no ha llegado, Rubia. ⏳');
+    return;
+  }
   // Bloquear hasta que termine la hora de estudio
   const MARK_UNLOCK = { 1: 13*60, 2: 12*60+45, 3: 12*60+45, 4: 12*60+45, 5: 12*60+20 };
   const unlockMin = MARK_UNLOCK[dow];
