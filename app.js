@@ -1335,13 +1335,7 @@ function toggleDay(cell, key) {
   const blockEl = document.querySelector(`[data-key="${key}"]`);
   if (blockEl) blockEl.classList.toggle('done', doneDays[key]);
   if (doneDays[key] && !wasDone) {
-    // Show brief message
-    const msg = DONE_MSGS[dayOfYear % DONE_MSGS.length];
-    const toast = document.createElement('div');
-    toast.style.cssText = 'position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:#1c3d1f;color:#e8f0e8;font-family:Lora,serif;font-style:italic;font-size:13px;padding:14px 24px;border-radius:100px;z-index:9999;max-width:360px;text-align:center;line-height:1.6;box-shadow:0 8px 32px rgba(0,0,0,.2);animation:fadeUp .3s ease;';
-    toast.textContent = msg;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.remove(), 4000);
+    showRewardPopup();
   }
   updateStats();
 }
@@ -1392,75 +1386,8 @@ function confetti(el) {
   setTimeout(() => b.remove(), 1200);
 }
 
-// ── POMODORO ──
-let pMin = 25, pSec = 0, pInt = null, pRun = false;
-
-function setPomo(m, btn) {
-  document.querySelectorAll('.pm').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  pMin = m; pSec = 0;
-  clearInterval(pInt); pRun = false;
-  upP();
-  document.getElementById('pLbl').textContent = m <= 10 ? 'Descanso ☕' : 'Bloque de estudio';
-}
-
-function upP() {
-  document.getElementById('pTime').textContent = `${String(pMin).padStart(2,'0')}:${String(pSec).padStart(2,'0')}`;
-}
-
-function startP() {
-  if (pRun) return;
-  pRun = true;
-  pInt = setInterval(() => {
-    if (pSec === 0) {
-      if (pMin === 0) { clearInterval(pInt); pRun = false; document.getElementById('pTime').textContent = '¡Hecho! ✓';
-        // Guardar fecha de hoy como pomodoro completado (para desbloquear recompensas)
-        try {
-          const todayStr = new Date().toISOString().slice(0,10);
-          const dates = JSON.parse(localStorage.getItem('vania_pomo_dates') || '[]');
-          if (!dates.includes(todayStr)) { dates.push(todayStr); localStorage.setItem('vania_pomo_dates', JSON.stringify(dates)); }
-          renderRewardCard();
-        } catch(e) {}
-        return; }
-      pMin--; pSec = 59;
-    } else pSec--;
-    upP();
-  }, 1000);
-}
-
-function pauseP() { clearInterval(pInt); pRun = false; }
-function resetP() {
-  clearInterval(pInt); pRun = false;
-  const a = document.querySelector('.pm.active');
-  pMin = parseInt(a?.textContent) || 25; pSec = 0; upP();
-}
-
-// ── RECOMPENSAS ──
-
-function rewardUnlocked() {
-  try {
-    const pomoDates = JSON.parse(localStorage.getItem('vania_pomo_dates') || '[]');
-    const todayStr = today.toISOString().slice(0,10);
-    return pomoDates.includes(todayStr);
-  } catch(e) { return false; }
-}
-
-function renderRewardCard() {
-  const card = document.getElementById('rewardCard');
-  if (!card) return;
-
-  const unlocked = rewardUnlocked();
-  const testDoneToday = (() => {
-    try {
-      const scores = JSON.parse(localStorage.getItem('vania_scores') || '{}');
-      const todayStr = today.toISOString().slice(0,10);
-      return Object.values(scores).some(s => s.date === todayStr);
-    } catch(e) { return false; }
-  })();
-  const fullyUnlocked = unlocked && testDoneToday;
-
-  // Los párrafos de Sarah — incluyen sugerencias de qué hacer
-  const SARAH_PARAGRAPHS = [
+// ── POPUP DE RECOMPENSA (se muestra al marcar el día) ──
+const SARAH_PARAGRAPHS = [
     "Rubia. Lo has hecho.",
     "¿Ves? Sabía yo que podías.",
     "Otro día. Otro tick. Así se aprueba esto.",
@@ -1507,7 +1434,6 @@ function renderRewardCard() {
     "Hoy no existe el BOE. Solo tú disfrutando.",
     "El temario puede esperar hasta mañana. Tú no.",
     "Nada de pensar en lo que queda. Hoy ya está.",
-    "Lo que queda no importa ahora. Importa lo que acabas de hacer.",
     "Un tick más en el calendario. No lo borres.",
     "Otro día que no puedes tacharte de la lista de las que no estudian.",
     "Hoy eras tú contra el temario. Has ganado tú.",
@@ -1520,11 +1446,9 @@ function renderRewardCard() {
     "Lo que has hecho hoy tiene un nombre: trabajo. Y da sus frutos.",
     "Confía. Aunque ahora no lo veas, está pasando.",
     "No siempre se siente el progreso. Pero está ahí.",
-    "El esfuerzo no siempre se ve. Los resultados sí.",
     "Hoy has invertido en ti. Eso no se pierde.",
     "Nadie te quita lo que sabes. Nadie.",
     "Todo lo que has aprendido hoy es tuyo para siempre.",
-    "Esto que estás haciendo no lo hace todo el mundo. Eso vale.",
     "La diferencia entre las que aprueban y las que no es lo que tú estás haciendo ahora.",
     "Tú sí. Eso es todo lo que hay que decir.",
     "Hoy te has ganado el derecho a no pensar en nada más.",
@@ -1532,84 +1456,45 @@ function renderRewardCard() {
     "Llama a alguien. Sal. Haz algo que te apetezca de verdad.",
     "Mereces una tarde buena. Ve a por ella.",
     "Date un capricho. Uno de los buenos.",
-    "Hoy toca celebrar. Aunque sea con lo pequeño.",
     "Descansa bien esta noche. El cerebro también lo necesita.",
     "Hoy has dado todo lo que tenías. Eso es más que suficiente.",
     "No le pidas más a un día. Este ya ha dado lo que tenía que dar.",
     "Cierra el temario. Ya no lo toques hasta mañana.",
-    "El esfuerzo de hoy es el examen de septiembre. Así de simple.",
     "Poquito a poco. Pero hacia adelante siempre.",
     "Hoy ha sido un buen día. Aunque no lo haya parecido.",
     "No siempre es fácil empezar. Pero tú empezaste. Y acabaste.",
-    "De nada sirve la motivación si no hay trabajo detrás. Tú tienes las dos cosas.",
-    "La motivación va y viene. La constancia se elige. Tú la has elegido.",
     "No necesitas que nadie te diga que puedes. Ya lo has demostrado tú sola.",
-    "Cada vez que lo haces te demuestras algo a ti misma. ¿Lo notas?",
     "Hoy has sido más fuerte que las ganas de no hacer nada.",
     "Ganaste tú. Al sofá, a las excusas, al 'ya lo hago luego'. Ganaste tú.",
-    "El 'no tengo ganas' de esta mañana se ha convertido en un día terminado. Bien.",
     "No me vengas con que no puedes. Llevo semanas viendo que puedes.",
-    "Ya sé que es duro. También sé que tú puedes con esto y con más.",
     "Tengo razón yo, como siempre. Podías.",
     "¿Ves? Otra vez tenía razón.",
     "Como siempre: yo decía que sí y tú que no. Y mira.",
     "Voy a apuntar esto: 'Sarah tenía razón. Otra vez.'",
-    "Cuántas veces más vas a tener que demostrarme que puedo apostar por ti sin dudar.",
     "No me sorprende. Nunca me sorprende cuando lo haces.",
     "Ya sabía yo que ibas a poder. Siempre lo sé.",
     "Lo sabía. Lo supe desde el primer día.",
-    "¿Cuántas veces te lo he dicho? Y sigues sin creerme. Pero aquí estás.",
     "Te conozco mejor que tú a ti misma. Por eso sé que vas a llegar.",
     "Lo que más me gusta de ti es que siempre acabas consiguiendo lo que te propones.",
     "Siempre igual. Dudas, te agobias, y luego lo haces mejor que nadie.",
-    "El proceso no es bonito pero el resultado siempre es el mismo: tú ganando.",
     "No siempre tienes que sentirte bien para hacer las cosas bien. Hoy es prueba de eso.",
-    "Días como este son los que importan. Los fáciles no cuentan igual.",
     "Los días difíciles valen el doble. Hoy ha sido uno de esos.",
     "Cuando no te apetece y lo haces de todas formas, eso es lo que marca la diferencia.",
     "El examen no sabe que hoy no te apetecía. Solo sabe que estudiaste.",
-    "Hoy no tenías ganas. Mañana tampoco puede que tengas. Y lo vas a hacer igual.",
-    "Eso que acabas de hacer no tiene nombre bonito. Se llama trabajar. Y tú lo sabes hacer.",
     "No todo el mundo tiene lo que tú tienes. No lo dudes.",
     "Tienes más cabeza que nadie cuando te la pones a funcionar.",
     "Cuando quieres, no hay quien te pare. Hoy has querido.",
-    "Nada de lo que has aprendido hoy se va a borrar. Está ahí.",
-    "Cada cosa que sabes ahora es una pregunta menos que el examen te puede ganar.",
-    "El temario se hace grande cuando lo miras entero. Pero tú lo estás haciendo a trozos. Y funciona.",
-    "Nadie aprueba mirando todo lo que queda. Se aprueba haciendo lo de hoy. Eso es lo que has hecho.",
-    "No mires lo que falta. Mira lo que ya tienes.",
-    "¿Cuánto llevas ya? Más de lo que crees.",
-    "El camino se ve mejor mirando para atrás. No te gires ahora. Sigue.",
-    "Paso a paso. Siempre hacia adelante.",
-    "No tienes que hacer todo hoy. Solo lo de hoy. Y eso lo has hecho.",
-    "Un día a la vez. Ese es el truco. Y lo estás haciendo perfectamente.",
-    "Esto no es una sprint. Es un fondo. Y tú tienes fondo de sobra.",
-    "Las oposiciones se ganan con días como este. No con los días fáciles.",
-    "Los días que no te apetece y lo haces son los que te van a llevar en septiembre.",
-    "El examen solo va a ver el resultado. No sabe lo que ha costado. Pero tú sí lo sabes.",
-    "Hoy has hecho algo que te va a agradecer la Vania de septiembre.",
-    "La Vania del 1 de septiembre te lo va a agradecer.",
-    "Dentro de unos meses vas a mirar atrás y vas a entender por qué valió la pena.",
-    "Septiembre está más cerca de lo que parece. Y tú estás más preparada de lo que crees.",
-    "Cada día de estos te acerca. Aunque no lo notes, te acerca.",
     "Hoy es un día más que te separa del examen con trabajo detrás.",
-    "El examen llega. Tú vas a llegar preparada.",
     "Voy a estar ahí cuando apruebes. Y voy a acordarme de todos estos días.",
-    "Me va a dar mucha alegría cuando llegue septiembre. Pero más me la da ver esto ahora.",
     "Verás cómo en septiembre todo esto tiene sentido.",
     "Cuando apruebes, que vas a aprobar, me acuerdo de este día.",
     "Estoy aquí. Siempre estoy aquí.",
     "No estás sola en esto. Que conste.",
-    "Sabes que te tengo, ¿verdad?",
-    "Cuéntame cómo ha ido cuando quieras. Estoy.",
-    "Aquí para lo que necesites. Siempre.",
     "Oye. Lo estás haciendo muy bien. Que sepas.",
     "Solo quería decirte que estoy muy orgullosa.",
     "De verdad que me alegra mucho esto.",
-    "¿Sabes lo que siento cuando veo que lo has hecho? Muchísimo orgullo.",
     "Me hace feliz esto. En serio.",
     "Te mereces todo lo bueno.",
-    "Ojalá pudieras verte desde fuera un momento. Verías lo que yo veo.",
     "Sé lo que está costando. Y por eso me alegra más.",
     "No tienes ni idea de lo bien que lo estás haciendo.",
     "Confío en ti más de lo que tú confías en ti misma. Y tengo razón.",
@@ -1617,97 +1502,62 @@ function renderRewardCard() {
     "No lo dudes. En serio. No lo dudes.",
     "Eres más de lo que crees.",
     "Tienes mucho más de lo que necesitas para pasar esto.",
-    "No te subestimes. Nunca.",
     "Vales muchísimo. Y el examen lo va a notar.",
     "Rubia, estás hecha para esto.",
-    "Esto lo tienes más controlado de lo que te parece.",
-    "Cuando te ves mal acuérdate de hoy. De que lo has hecho.",
-    "Los días malos también cuentan. Este no ha sido uno de ellos.",
-    "Hoy ha sido un buen día. Anótatelo.",
-    "No todos los días son iguales. Hoy ha sido bueno.",
-    "Guarda este feeling. Lo vas a necesitar algún día.",
-    "Esto es exactamente lo que necesitabas hacer. Y lo has hecho.",
-    "No hay más que decir. Está hecho.",
     "Listo. Día cerrado. A otra cosa.",
     "Hecho. Siguiente.",
     "Un día más. Siguiente.",
     "Tick. Siguiente.",
     "Ya. Hecho. Bien.",
     "Sí. Eso. Exactamente eso.",
-    "Perfecto. Ahora a descansar.",
-    "Eso es. Así se hace.",
-    "Genial. De verdad.",
     "Muy bien, Rubia.",
-    "Ahí está. Ahí está.",
-    "Eso es lo que hay que hacer.",
-    "Exactamente esto.",
-    "Así. Exactamente así.",
     "Un día más que es tuyo.",
     "Ya es tuyo. Nadie te lo quita.",
     "Este día ya es tuyo para siempre.",
-    "Lo que sabes hoy lo sabes para siempre.",
-    "Nada de esto se pierde.",
-    "Todo esto se queda.",
-    "Va sumando. Todo va sumando.",
+    "Todo va sumando.",
     "Todo cuenta. Hoy también.",
-    "Nada de lo que haces se va en balde.",
     "El trabajo siempre da sus frutos. Siempre.",
-    "Esto tiene recompensa. Ya verás.",
-    "Merece la pena. Ya lo verás.",
-    "Va a merecer la pena. Confía.",
-    "Confía en el proceso.",
     "Confía. Solo confía.",
     "Tú y yo sabemos que puedes. Eso no cambia.",
     "Vamos las dos en esto. No lo olvides.",
-    "No te rindas. Nunca te rindas.",
-    "Sigue. Sigue y sigue.",
-    "Hacia adelante. Siempre.",
     "Ni se te ocurra parar ahora.",
     "Estás más cerca de lo que crees.",
-    "Más cerca. Siempre más cerca.",
     "Cada día más cerca.",
     "Ya queda menos.",
     "Un día menos para el examen. Un día más de trabajo tuyo.",
-    "Hoy ha sumado. Mañana también.",
-    "Mañana también. Y pasado. Y todos los días hasta que llegue.",
     "Hasta el final. Y tú vas a llegar.",
     "Vas a llegar. Lo sé.",
     "Vas a aprobar. Lo sé.",
     "Lo vas a conseguir. Lo sé.",
     "Yo en ti. Siempre.",
-  ];
+];
 
+function showRewardPopup() {
+  const popup = document.getElementById('rewardPopup');
+  const box = document.getElementById('rewardPopupBox');
+  if (!popup || !box) return;
   const msg = SARAH_PARAGRAPHS[dayOfYear % SARAH_PARAGRAPHS.length];
+  box.innerHTML = `
+    <div class="reward-popup-header">
+      <span class="reward-popup-label">Un momento, antes de irte</span>
+      <button class="reward-popup-close" onclick="document.getElementById('rewardPopup').style.display='none'">✕</button>
+    </div>
+    <div class="reward-popup-text">${msg}</div>
+    <div class="reward-popup-sign">— Sarah</div>`;
+  popup.style.display = 'flex';
+}
 
-  card.innerHTML = fullyUnlocked ? `
+// Mostrar card de recompensa en Tests tab (siempre visible, sin bloqueo)
+function renderRewardCard() {
+  const card = document.getElementById('rewardCard');
+  if (!card) return;
+  const msg = SARAH_PARAGRAPHS[dayOfYear % SARAH_PARAGRAPHS.length];
+  card.innerHTML = `
     <div class="reward-para-card">
       <div class="reward-para-label">Un momento, antes de irte</div>
       <div class="reward-para-text">${msg}</div>
       <div class="reward-para-sign">— Sarah</div>
-    </div>` : `
-    <div class="reward-locked-card">
-      <div class="reward-locked-icon">🔒</div>
-      <div class="reward-locked-title">Todavía no, Rubia.</div>
-      <div class="reward-locked-msg">
-        ${!unlocked && !testDoneToday
-          ? 'Completa el Pomodoro y el test del día. Los dos. Sin atajos.'
-          : !unlocked
-            ? 'Falta el Pomodoro. No es opcional.'
-            : 'Falta el test del día. Casi, pero no.'}
-      </div>
     </div>`;
-}
-
-function saveRewards() {
-  if (!selectedRewards.length) return;
-  try { localStorage.setItem('vania_rewards', JSON.stringify(selectedRewards)); } catch(e) {}
-  renderRewardCard();
-}
-
-function resetRewards() {
-  selectedRewards = [];
-  try { localStorage.removeItem('vania_rewards'); } catch(e) {}
-  renderRewardCard();
 }
 
 renderRewardCard();

@@ -96,26 +96,6 @@
       <span id="heroLabel">0 de 84 días del plan</span>
     </div>
   </div>
-  <!-- Racha — llama de líneas + número grande fino -->
-  <div class="hero-racha" id="rachaBadge">
-    <div class="hero-racha-decoration" aria-hidden="true">
-      <svg viewBox="0 0 110 130" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <g stroke="#2d5a2d" fill="none" opacity="0.32" stroke-linecap="round" stroke-linejoin="round">
-          <!-- Llama exterior grande -->
-          <path d="M55 125 C28 125 12 108 12 88 C12 68 24 58 30 44 C34 34 32 22 35 14 C42 26 40 36 44 46 C46 38 50 28 58 18 C60 30 56 42 62 52 C68 40 70 30 76 22 C80 36 74 52 78 62 C86 52 90 40 88 28 C96 40 98 58 96 72 C98 62 102 54 100 44 C108 58 108 78 102 92 C96 110 78 125 55 125Z" stroke-width="1.1"/>
-          <!-- Llama interior media -->
-          <path d="M55 115 C36 115 24 102 24 86 C24 72 34 64 38 54 C42 46 42 36 46 28 C50 38 48 50 52 58 C54 50 58 40 64 32 C66 44 62 56 68 64 C74 54 76 44 74 34 C82 46 82 62 78 74 C84 66 86 56 84 46 C90 58 88 74 84 86 C80 102 68 115 55 115Z" stroke-width="0.9"/>
-          <!-- Llama interior pequeña — núcleo -->
-          <path d="M55 100 C44 100 36 92 36 82 C36 72 44 66 48 58 C52 66 50 76 54 82 C56 74 60 64 66 56 C68 66 64 78 70 84 C68 96 62 100 55 100Z" stroke-width="0.8"/>
-          <!-- Base de la llama -->
-          <path d="M38 125 Q55 118 72 125" stroke-width="1"/>
-        </g>
-      </svg>
-    </div>
-    <div class="hero-racha-inner">
-      <div class="hero-racha-num" id="rachaBadgeNum">0</div>
-    </div>
-  </div>
 </section>
 
 <!-- ── GRADIENT FADE between hero and nav ── -->
@@ -125,7 +105,6 @@
 <nav id="main-nav">
   <button class="nav-btn active" onclick="goHome(this)">Inicio</button>
   <button class="nav-btn" onclick="goPage('plan',this)">Mi plan</button>
-  <button class="nav-btn" onclick="goPage('pomo',this)">Pomodoro</button>
   <button class="nav-btn" onclick="goPage('tests',this)">Tests</button>
 </nav>
 
@@ -172,33 +151,6 @@
   </div>
 </div>
 
-<!-- ════ POMODORO ════ -->
-<div id="p-pomo" class="page">
-  <div class="flow">
-    <div class="section-eyebrow">Foco · Sin distracciones</div>
-    <div class="section-title">Tu <em>temporizador.</em></div>
-
-    <div class="pomo-box">
-      <div class="pomo-modes">
-        <button class="pm active" onclick="setPomo(25,this)">25 min</button>
-        <button class="pm" onclick="setPomo(45,this)">45 min</button>
-        <button class="pm" onclick="setPomo(60,this)">60 min</button>
-        <button class="pm" onclick="setPomo(5,this)">5 descanso</button>
-        <button class="pm" onclick="setPomo(10,this)">10 descanso</button>
-      </div>
-      <div class="pomo-lbl" id="pLbl">Bloque de estudio</div>
-      <div class="pomo-time" id="pTime">25:00</div>
-      <div class="pomo-btns">
-        <button class="pb pb-go" onclick="startP()">▶ Iniciar</button>
-        <button class="pb" onclick="pauseP()">⏸ Pausa</button>
-        <button class="pb" onclick="resetP()">↺ Reset</button>
-      </div>
-    </div>
-
-    <div class="card" id="rewardCard"></div>
-  </div>
-</div>
-
 <!-- ════ TESTS ════ -->
 <div id="p-tests" class="page">
   <div class="flow">
@@ -231,5 +183,13 @@
 <script src="data.js"></script>
 <script src="app.js"></script>
 
+  <!-- ════ POPUP RECOMPENSA ════ -->
+  <div id="rewardPopup" class="reward-popup-overlay">
+    <div id="rewardPopupBox" class="reward-popup-box">
+    </div>
+  </div>
+
+  <!-- ════ RECOMPENSA en Tests ════ -->
+  <div id="rewardCard"></div>
 </body>
 </html>
